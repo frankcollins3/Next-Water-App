@@ -16,7 +16,10 @@ I opted to allow the user to check, for "currentTodayConditions", specified by c
 * Would have to gather user zip code if they want, might even implement "Want to share your location?" But imagine most people wouldn't want to. Still, to implement "share location" would be interesting.
 
 ---
+/sharkweek 
 * shark attack data // almost committed before realizing one could use "npm i puppeteer" to allow the user to scrape web for shark articles as well.
+// might make a canvas game "wakeboarding" that has a boat dragging the user on a wakeboard, with a shark following, shark would be almost as fast, have to swerve and weave.
+this game would hopefully --force some whimsicality into the page which might be needed due to the grim nature of shark attacks.
 ---
 
 ---
