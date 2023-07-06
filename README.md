@@ -2,7 +2,8 @@
 Happy, Healthy Water Cycling App that tracks user/human fluid intake.
 
 changing this readme upon successful deployment.
-Fluid_Container, an App that redoes General Assembly code bootcamp team project, with an update of: GraphQL, redux, and psql relational data instead of mongo. 
+Fluid_Container, an App that redoes General Assembly code bootcamp team project, with an update of: 
+GraphQL, redux, and psql relational data instead of mongo, selection of profileIcons and puppeteer to search web for a user-specified-by-input icon, and added accuweatherAPI to the calendar page
 
 This iteration attempts to bridge gaps and patch clogs with:
 **GoogleLogin component 5.2.12** is having **compatibility issues** with **React 18.x** (for production only not for the local environment)
