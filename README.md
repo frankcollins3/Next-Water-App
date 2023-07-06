@@ -25,6 +25,8 @@ this game would hopefully --force some whimsicality into the page which might be
 ---
 * revisiting the idea of water conservation: user signs up with "squid" included in username-string. Now a "Save our Seas" page becomes available,
 * but with Context-facilitated-App-Theme there will be black, blotchy, ink in spots, and the conservation page would have L & R side waste pipes spilling black into the page.
+* might make a canvas game "dive" to support conservation and allow the user to see the multicolored beauty of exploring for coral reefs. might not do because of the oceangate accident though
+(just bookmarking that i'm sitting here preparing to migrate to next and idea after idea, whether good or bad, keep popping up as I try to proceed)
 ---
 
 note: out of these 3 ideas, only the rainy day accuweatherAPI feature was built. The conservation was NOT built and the shark attack was just thought of moments ago while looking up shark-articles.
