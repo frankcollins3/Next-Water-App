@@ -1,0 +1,70 @@
+:root {
+  --initial-height: 100px;
+}
+
+
+
+.btn {
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  transition-duration: 1s;
+  border: none;
+  color: #333333;
+}
+
+.btn:focus {
+  color: silver;
+}
+
+.btn:hover {
+  font-size: 20px;
+  border: 1px solid #dedede;
+}
+
+.btn:disabled {
+}
+
+#ReminderLi {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  /* border: 5px solid green; */
+}
+
+@media only screen and (max-width: 800px) {
+
+
+  .btn {
+    transform: scale(0.75);
+    padding: 0;
+  }
+
+  .timeline-display {
+    font-size: 1.5rem;
+    position: relative;
+  }
+
+  .timeline-hover {
+    position: relative;
+    font-size: 1.5rem;
+    width: fit-content;
+    left: 20%;
+  }
+
+  .timeline-text {
+    position: relative;
+    font-size: 1.5rem;
+  }
+
+  .btn:hover {
+    font-family: 'Open Sans Condensed', sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    transition-duration: 1s;
+    border: none;
+    transition-duration: 1s;
+  }
+}
+

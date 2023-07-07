@@ -1,0 +1,38 @@
+.profile-container{
+
+display: flex;
+flex-flow: row nowrap;
+justify-content: flex-end;
+align-items: center;
+
+width: 20%;
+padding: 1% 0 3% 0;
+
+
+}
+
+.profile-image{
+    margin: 0 10px;
+}
+.profile-image img{
+    border: 5px solid #72d3fe;
+    border-radius: 50%;
+    position: relative;
+
+}
+
+.profile-container h1{
+    position: absolute;
+    z-index: 100;
+}
+
+.profile-container .profile-link{
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+background: #dedede70;
+border: 1px dashed #72d3fe;
+    margin: 0 10px;
+}
+
+

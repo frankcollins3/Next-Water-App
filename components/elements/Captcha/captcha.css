@@ -1,0 +1,83 @@
+.Captcha-Cont {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 25vh; /* Adjust the height as needed */
+  }
+
+
+
+  @keyframes rot {
+	from {
+		transform: rotate(0deg)
+		           translate(-150px)
+		           rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg)
+		           translate(-150px) 
+		           rotate(-360deg);
+	}
+}
+
+#drop {
+	width: 100px;
+	height: 100px;
+	top: 50px;
+	left: 12.5%;
+	margin: -5px;
+	animation: rot 3s infinite linear;
+}
+
+@keyframes boop {
+    0% {
+        transform: rotate(-15deg);
+        border: 1.5px solid #73defe;
+        border-radius: 50%;
+      }
+      25% {
+        transform: rotate(-15deg);
+        border: 3px solid #dedede70;
+        border-radius: 0%;
+      }
+      50% {        
+        transform: rotate(-5deg);
+        border: 2.5px solid silver;
+        border-radius: 50%;
+    }
+    75% {
+        transform: rotate(5deg);
+    }
+    100% {
+    }
+}
+
+.boop {
+    animation-name: boop;
+    animation-duration: 3s;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+    /* animation-name: boop; */
+}   
+
+
+
+/* .Move-Boat { animation-name: DriveBoat; animation-duration: 6s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; } */
+
+/* @keyframes DriveBoat {
+    0% {
+      left: 0;
+    }
+    25% {
+      margin-left: 50px;
+    }
+    50% {
+      margin-left: -100px;
+    }
+    75% {
+      margin-left: 100px;
+    }
+    100% {
+      margin-left: -50px;
+    }
+  }   */

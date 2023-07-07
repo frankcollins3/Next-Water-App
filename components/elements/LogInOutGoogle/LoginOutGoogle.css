@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Moon+Dance&family=Poppins:ital,wght@0,300;1,100&display=swap');
+
+img {
+    height: 50px;
+    width: 50px;
+    margin: 0 0.25em;
+    border: 1px dashed #72d3fe;
+    border-radius: 50%;
+  }
+
+.login-container { 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    min-height: 30vh;
+    min-width: 50vw;
+    background-color: #dedede70;
+    border: 1px dashed #72d3fe;
+    padding: 2em;
+}
+
+.Form-Container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+}
+
+form {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  /* height: 25vh; */
+  /* margin-top: 5em; */
+}
+
+.Signup-Login-Form {
+  /* border: 5px solid blue; */
+  
+}
+/* .Signup-Login-Form > input { margin-top: 1em; } */
+
+#Login-Form {
+  /* border: 1px dashed coral; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+#Signup-Form {
+  /* border: 1px dashed coral; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#login-msg-text {
+  font-weight: normal;
+}
+
+#login-msg-text:hover { font-weight: bolder; }
+
+/* #submit-input-data-cont {
+    position: absolute;
+} */
+
+.google-container {
+  height: 50px;
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  /* position: absolute; */
+  /* margin-top: 1em; */
+}
+
+.google-container > :first-child {
+    opacity: 0.0001;
+}
+
+.Login-Signup-Btn {
+  height: 2em;
+  width: 5em;
+  /* border-radius: 40%; */
+  border: none;
+  border-bottom: 3px dashed #72d3fe;
+  margin: 0 1.275em;
+  font-family: 'Moon Dance', cursive;
+  font-size: 32px;
+  background-color: #dedede70;
+/* font-weight: bolder; */
+  color: silver;
+  text-align: center;
+}
+
+.Login-Signup-Btn:hover {
+  font-weight: bolder;
+}
+
+.submit-faucet {
+  align-self: center;
+  border: none;
+  border-radius: 0%;
+}
+
+.row {
+    align-self: space-between;
+}
+
+#invisible { color: transparent; margin: 0; padding: 0; font-weight: bolder;  }
+#bluespan { color: #72d3fe; margin: 0; padding: 0; font-weight: bolder; }
+
+#gspan { color: #4285f4; margin: 0; padding: 0; font-weight: bolder; }
+
+#red_o_span { color: #EA4335; margin: 0; padding: 0; font-family: 'Poppins', }
+#yellow_o_span { color: #FBBC05; margin: 0; padding: 0; }
+#lil_g_span { color: #4285f4; margin: 0; padding: 0; }
+#l_span { color: #34A853; margin: 0; padding: 0; } 
+#e_span { color: #EA4335; margin: 0; padding: 0; }
+
+/* .googleLinkBtnClass { border: 5px solid hotpink; } */
+
+#google-link-btn {  
+  width: 75%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h1 { color: silver; }     h1:hover { font-weight: bolder;}
+
+#poppinsLight {
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 100;
+  font-style: italic;
+  position: absolute;
+}
+
+#poppinsFat {
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bolder;
+  /* font-weight: 300; */
+}
+
+.poppinsLight {
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 100;
+  /* font-style: italic; */
+}
+
+.poppinsFat {
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-style: none;
+}
+
+#hide { display: none; }

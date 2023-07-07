@@ -1,0 +1,13 @@
+input {
+    height: 2vw;
+    width: 12vw;
+    background-color: #dedede70;
+    border: 1px dashed #72d3fe;
+    color: silver;
+    text-align: center;
+    margin-top: 0.55em;
+  }
+  
+  input:focus {
+    border: 1px dashed #72d3fe;
+  }
