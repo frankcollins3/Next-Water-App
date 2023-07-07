@@ -1,34 +1,34 @@
-# Next-Water-App
-Happy, Healthy Water Cycling App that tracks user/human fluid intake.
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-changing this readme upon successful deployment.
-Fluid_Container, an App that redoes General Assembly code bootcamp team project, with an update of: 
-GraphQL, redux, and psql relational data instead of mongo, selection of profileIcons and puppeteer to search web for a user-specified-by-input icon, and added accuweatherAPI to the calendar page
+## Getting Started
 
-This iteration attempts to bridge gaps and patch clogs with:
-**GoogleLogin component 5.2.12** is having **compatibility issues** with **React 18.x** (for production only not for the local environment)
-in my eyes: original looks great, but **mobile design** doesn't do its UI justice (but bootcamp split us into teams and we all only had a week to do it; don't want to sound jeerful)
-overusing: --legacy-peer-deps, especially from GraphQLExpress. Problem made worse with install & uninstall of webpack, which react still is aware of beyond uninstall, remove node_mod,
+First, run the development server:
 
-** Brainstorm Bin **
-now we can make the accuweatherAPI link up to the dailyData when the dailyData is saved. This would mean a rainy day would show up on calendar as a raincloud. Had to add psql data column, so instead:
-I opted to allow the user to check, for "currentTodayConditions", specified by city (user input) That showed whether or not it was rainy. It never tracks rainy days by saved daily data which first wanted.
-* Would have to gather user zip code if they want, might even implement "Want to share your location?" But imagine most people wouldn't want to. Still, to implement "share location" would be interesting.
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
 
----
-/sharkweek 
-* shark attack data // almost committed before realizing one could use "npm i puppeteer" to allow the user to scrape web for shark articles as well.
-// might make a canvas game "wakeboarding" that has a boat dragging the user on a wakeboard, with a shark following, shark would be almost as fast, have to swerve and weave.
-this game would hopefully --force some whimsicality into the page which might be needed due to the grim nature of shark attacks.
----
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
----
-* revisiting the idea of water conservation: user signs up with "squid" included in username-string. Now a "Save our Seas" page becomes available,
-* but with Context-facilitated-App-Theme there will be black, blotchy, ink in spots, and the conservation page would have L & R side waste pipes spilling black into the page.
-* might make a canvas game "dive" to support conservation and allow the user to see the multicolored beauty of exploring for coral reefs. might not do because of the oceangate accident though
-(just bookmarking that i'm sitting here preparing to migrate to next and idea after idea, whether good or bad, keep popping up as I try to proceed)
----
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-note: out of these 3 ideas, only the rainy day accuweatherAPI feature was built. The conservation was NOT built and the shark attack was just thought of moments ago while looking up shark-articles.
-  
-** End Of Brainstorm Bin **
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
