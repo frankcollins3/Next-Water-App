@@ -66,6 +66,9 @@ export const typeDefs = gql`
 
         allDBdata: [Data]!
         allUserData(users_id: Int!): [Data]!
+
+        idArgsReturnIcon(users_id: Int!): Users
+        userLogin(emailOrUsername: String!, password: String!): Users
     }
 
     type Mutation {
@@ -101,10 +104,25 @@ export const typeDefs = gql`
             users_id: Int!
         ): Data
 
-        }
+        userSignup(
+            google_id: String!
+            icon: String!
+            username:  String!
+            email: String!
+            password: String!
+            age: Int!
+        ): Users
         
+        linkUserWithGoogle(
+            username: String!
+            google_id: String!
+            icon: String!
+        ): Users
+        }
 
         `
+
+
 // getDailyData(users_id: Int!): Data              // (users_id: Int!) these are the args don't forget. Don't load them with all endpoints if they only need ID
         
     // * * * * *  allDBsettings: [Settings] * * * * *  new GraphQLList(Settings)
