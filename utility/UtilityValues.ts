@@ -21,3 +21,9 @@ export const currentDayBorderOff = (elem:any) => {
         CSS($(elem), 'borderTop', '40px dotted #73defe')
         CSS($(elem), 'color', 'silver')              
 }
+
+
+
+// classes
+export const flexPropertyColumnCombo = ["flex", "column"].join(" ")
+export const flexPropertyRowCombo = ["flex", "row"].join(" ")
