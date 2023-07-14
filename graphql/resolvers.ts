@@ -135,9 +135,14 @@ export const resolvers = {
         return newSettings;
     },
     addUser: async (parent, args) => {
+      const allusers = await allusersDB()
+      let userlength = allusers.length + 1
+
       const { id, google_id, icon, username, email, password, age } = args;
-      const newUser = await prisma.users.create({ data: { id, google_id, icon, username, email, password, age } })
-      if (!newUser) return
+      const newUser = await prisma.users.create({ 
+        data: { id: userlength, google_id: google_id, icon: icon, username: username, email: email, password: password, age: age } 
+      })
+      if (!newUser) "Bad Request! Sorry!"
       return newUser
       // id |  google_id   |          icon          |   username   |         email          |   password    | age
     },
