@@ -1,5 +1,6 @@
 import $ from 'jquery'
 import CSS from './CSS'
+import bcrypt from "bcryptjs"
 
 export const AgeArray = [1,2,3,4,5,6,7,8,9,10]
 export const ALPHABET = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
@@ -22,8 +23,13 @@ export const currentDayBorderOff = (elem:any) => {
         CSS($(elem), 'color', 'silver')              
 }
 
-
-
 // classes
 export const flexPropertyColumnCombo = ["flex", "column"].join(" ")
 export const flexPropertyRowCombo = ["flex", "row"].join(" ")
+
+export const hashPasser = (password:string) => {
+        const saltRounds = 13
+        const tableSalt = bcrypt.genSaltSync(saltRounds)
+        const passHasher = bcrypt.hashSync(password, tableSalt)
+        return passHasher
+}
