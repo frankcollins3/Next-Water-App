@@ -1,5 +1,6 @@
 import axios from 'axios'
 import bcrypt from "bcryptjs"
+import { hashPasser } from 'utility/UtilityValues';
 
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient()
@@ -42,6 +43,7 @@ export const resolvers = {
 
         return { name: randompokemon.name, id: 0 }
     },
+    allDBusers: async () => { return await allusersDB() },
     allDBsettings: async () => { return await prisma.settings.findMany() },   
 // these are the age, height, etc. settings for the user. These settings determine the water schedule. reminder is the notification intensity. 8am - 8pm is 8 - 16. notification intensity of 2 means every 2 hours get notified.
     userSettings: async (parent, args) => {
@@ -139,8 +141,11 @@ export const resolvers = {
       let userlength = allusers.length + 1
 
       const { id, google_id, icon, username, email, password, age } = args;
+
+      const hashWord = hashPasser(password)
+
       const newUser = await prisma.users.create({ 
-        data: { id: userlength, google_id: google_id, icon: icon, username: username, email: email, password: password, age: age } 
+        data: { id: userlength, google_id: google_id, icon: icon, username: username, email: email, password: hashWord, age: age } 
       })
       if (!newUser) "Bad Request! Sorry!"
       return newUser
