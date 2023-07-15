@@ -64,6 +64,7 @@ export const typeDefs = gql`
         allDBsettings: [Settings]!      
         userSettings(id: Int!): Settings
 
+        allDBusers: [Users]!
         allDBdata: [Data]!
         allUserData(users_id: Int!): [Data]!
 
