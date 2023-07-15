@@ -34,8 +34,18 @@ export const hashPasser = (password:string) => {
         return passHasher
 }
 
-const usernamegood:boolean = true;
-const passwordgood:boolean = true;
-const emailgood:boolean = true;
-const agegood:boolean = true;
-export const signupGood:boolean[] = [usernamegood, passwordgood, emailgood, agegood];
+const usernameGood:boolean = true;
+const emailGood:boolean = true;
+const passwordGood:boolean = true;
+const ageGood:boolean = true;
+export const signupGood:boolean[] = [usernameGood, emailGood, passwordGood, ageGood];
+export const signupGoodCheck = (allusers, username, password, email, age) => {
+        if (!allusers.includes(username) && username.length > 6 && username.length < 30) {
+                if (email.includes('@') && email.replace(/^.*\.(.*)$/, '$1') === "com" || email.replace(/^.*\.(.*)$/, '$1') === "net" || email.replace(/^.*\.(.*)$/, '$1') === "org") {
+                if (/[\!@#$%^&*\(\)]/.test(password) && /[A-Z]/.test(password) && /[0-9]/.test(password)) {
+                    return true
+                }    
+                } else return false   // else block for email check which toggles: export const signupGood:boolean[] = [usernamegood, passwordgood, emailgood, agegood]; emailGood to be ru        
+                // } else return signupGood[1] = false;   // else block for email check which toggles: export const signupGood:boolean[] = [usernamegood, passwordgood, emailgood, agegood]; emailGood to be ru        
+                }
+}
