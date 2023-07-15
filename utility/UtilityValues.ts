@@ -33,3 +33,9 @@ export const hashPasser = (password:string) => {
         const passHasher = bcrypt.hashSync(password, tableSalt)
         return passHasher
 }
+
+const usernamegood:boolean = true;
+const passwordgood:boolean = true;
+const emailgood:boolean = true;
+const agegood:boolean = true;
+export const signupGood:boolean[] = [usernamegood, passwordgood, emailgood, agegood];
