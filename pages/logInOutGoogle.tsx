@@ -1,7 +1,7 @@
 // import LogInOutGoogle as ...
 import styles from "components/elements/LogInOutGoogle/LogInOutGoogle.module.scss"
 import Container from 'react-bootstrap/Container'
-import RenderLogInOutGoogle from "components/elements/LogInOutGoogle"
+import LogInOutGoogle from "components/elements/LogInOutGoogle"
 
 // caching
 import Redis from 'ioredis'
@@ -12,16 +12,12 @@ import {SERIALIZESTRING, PARSESERIALIZEDSTRING } from "utility/UtilityValues"
 
 export default function logInOutGoogle(props) {
     let { serializedRedis } = props
-    serializedRedis = PARSESERIALIZEDSTRING(serializedRedis)
-    console.log('serializedRedis')
-    console.log(serializedRedis)
-
-    
+    const redis = PARSESERIALIZEDSTRING(serializedRedis)
 
 
     // import redux state
     return (
-        <RenderLogInOutGoogle></RenderLogInOutGoogle>
+        <LogInOutGoogle redis={redis}></LogInOutGoogle>
     )    
 }
 
