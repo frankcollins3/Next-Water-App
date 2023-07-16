@@ -39,13 +39,27 @@ const emailGood:boolean = true;
 const passwordGood:boolean = true;
 const ageGood:boolean = true;
 export const signupGood:boolean[] = [usernameGood, emailGood, passwordGood, ageGood];
-export const signupGoodCheck = (allusers, username, password, email, age) => {
+
+export const signupGoodCheck = (allusers, username, email, password, age, parentconfirm) => {
         if (!allusers.includes(username) && username.length > 6 && username.length < 30) {
+                console.log("username good");
                 if (email.includes('@') && email.replace(/^.*\.(.*)$/, '$1') === "com" || email.replace(/^.*\.(.*)$/, '$1') === "net" || email.replace(/^.*\.(.*)$/, '$1') === "org") {
-                if (/[\!@#$%^&*\(\)]/.test(password) && /[A-Z]/.test(password) && /[0-9]/.test(password)) {
-                    return true
+                        console.log("email good")
+                        if (/[\!@#$%^&*\(\)]/.test(password) && /[A-Z]/.test(password) && /[0-9]/.test(password)) {
+                        console.log("password good")
+                        // if the user is older than 10 
+                        if (age > 10 ) {
+                                console.log("age is older than 10")
+                                return true
+                        } else if (age < 10) {
+                                console.log("age younger than 10")
+                                return parentconfirm ? true : false
+                        }                        
                 }    
                 } else return false   // else block for email check which toggles: export const signupGood:boolean[] = [usernamegood, passwordgood, emailgood, agegood]; emailGood to be ru        
                 // } else return signupGood[1] = false;   // else block for email check which toggles: export const signupGood:boolean[] = [usernamegood, passwordgood, emailgood, agegood]; emailGood to be ru        
-                }
+                } else return false
 }
+
+export function SERIALIZESTRING (obj:any) { return JSON.stringify(obj) }
+export function SERIALIZEDSTRPARSE (str:string) { return JSON.parse(str) }
