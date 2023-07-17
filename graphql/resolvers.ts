@@ -1,50 +1,154 @@
 import axios from 'axios'
 import bcrypt from "bcryptjs"
-import { hashPasser } from 'utility/UtilityValues';
+import { hashPasser, SERIALIZESTRING, PARSESERIALIZEDSTRING } from 'utility/UtilityValues';
+
+import Redis from 'ioredis'
+const redis = new Redis({
+  port: 6379,
+  host: '127.0.0.1'
+  // password: NEXT_PUBLIC_APP_REDIS_PASSWORD
+})
 
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient()
 
 const alldataDB = prisma.data.findMany
 const allusersDB = prisma.users.findMany
+const allsettingsDB = prisma.settings.findMany
 
+const userRedisCheck = async () => {  // thinking about making this a func with param
+    return redis.get("users", (error, users) => {
+      if (error) {
+        return error
+      } else {      
+        return users
+      }
+  });
+}
+
+const settingsRedisCheck = async () => {  // thinking about making this a func with param
+    return redis.get("settings", (error, users) => {
+      if (error) {
+        return error
+      } else {      
+        return users
+      }
+  });
+}
+
+const dataRedisCheck = async () => {  // thinking about making this a func with param
+    return redis.get("data", (error, users) => {
+      if (error) {
+        return error
+      } else {      
+        return users
+      }
+  });
+}
+
+
+// const datacheck = (data:any) => {
+//     if (typeof data !== "string") {
+//         return new Promise(async(resolve, reject) => {
+//           const allDataObject = PARSESERIALIZEDSTRING(data)
+//           return resolve(allDataObject)
+//         })
+//     }
+// }
 
 export const resolvers = {
     Query: {
-    links:() => [
-            // this is the resolver so doing anything in this function is fair game.
-        {
-            id: 1,
-            title: "mouse droplet",
-            description: 'small water drop',
-            category: 'water drops',
-            imageUrl: "/water_img/mouse_droplet",
-            url: "localhost:3000",
-            users: [1],
-        },
-        {
-            id: 2,
-            title: "empty drop",
-            description: 'empty water drop',
-            category: 'water drops',
-            imageUrl: "/water_img/bg_blue",
-            url: "localhost:3000",
-            users: [1],
-        },
-
-    ],
-    pokemon: async () => {
-        let pokeurl:string = `http://pokeapi.co/api/v2/pokemon/`
-        let predata = await axios.get(pokeurl)        
-        let pokemon = predata.data.results
-        let randompokemon = pokemon[Math.floor(Math.random() * pokemon.length)]
-        let randomName:string = randompokemon.name
-        // let randomId:string = randompokemon.id
-
-        return { name: randompokemon.name, id: 0 }
+      allDBusers: async () => {
+        return new Promise(async (resolve, reject) => {      
+          // invoke the redis-cache checking function userRedisCheck() if there's cache data, return and end the function to return cache instead of query DB
+          const users:any = await userRedisCheck()
+          if (users) {
+            const allUsersObject = PARSESERIALIZEDSTRING(users)
+            console.log("In the Redis block", allUsersObject);
+            resolve(allUsersObject);
+          } else {
+            // if we're else blocked then there's no cache data
+            console.log("In the NO REDIS block");
+            try {
+              // allusersDB() -----> prisma.users.findMany()
+              const allusers = await allusersDB();
+              if (allusers) {
+                // there are no redis-cache user data but we have postgres DB data returned from prisma. JSON.stringify(alluser)
+                let userStrForRedis = SERIALIZESTRING(allusers);
+      // set the "users" key === JSON.stringify(users) so it can be parsed during the next query with userRedisCheck -> redis.get("users")
+                await redis.set("users", userStrForRedis);
+                // resolve "return new Promise" with {allusers} 
+                resolve(allusers);
+                // errors and failures below 
+              } else {
+                resolve("theres been a mistake!");
+              }
+            } catch (error) {
+              reject(error);
+            }
+          }
+        });
+      },
+    allDBsettings: async () => { 
+      let settings:any = await settingsRedisCheck()
+      // return settings
+      if (settings) {        
+        const allSettingsObject = PARSESERIALIZEDSTRING(settings)
+        console.log("settings redis block", allSettingsObject)
+        return allSettingsObject
+      } else {
+        console.log("else block NO redis settings in cache")
+  //`no "settings" -> prisma.strains.findMany() -> redis-cache, so as with users: handle graphQL return data -> redis.set("settings") -> so userSettingsCheck() returns if block above next query
+        const allsettings = await allsettingsDB()
+        if (allsettings) {
+          let settingsStrForRedis = SERIALIZESTRING(allsettings)
+          await redis.set("settings", settingsStrForRedis)
+          return allsettings
+        } else {
+          return "guys there's been a mistake"
+        }
+      }
+    },    
+    allDBdata: async () => { 
+      let data:any = await dataRedisCheck()
+      if (data) {
+        const allDataObject = PARSESERIALIZEDSTRING(data)
+        console.log("data redis block", allDataObject)
+        return allDataObject
+      } else {
+        console.log("else block for data NO redis cache")
+        const alldata = await alldataDB()
+        if (alldata) {
+          let dataStrForRedis = SERIALIZESTRING(alldata)
+          await redis.set("data", dataStrForRedis)
+          return alldata
+        }  else {
+          return "bad handshake"
+        }
+      }
+      // return await prisma.data.findMany() 
     },
-    allDBusers: async () => { return await allusersDB() },
-    allDBsettings: async () => { return await prisma.settings.findMany() },   
+    // allDBdata: async () => { return await prisma.data.findMany() },
+    // allDBsettings: async () => { 
+    //   // return await prisma.settings.findMany() 
+    //   redis.get("settings", async (error, settings) => {
+    //     if (settings) {
+    //       console.log("settings if block REDIS!!!!")
+    //       const allSettingsObject = PARSESERIALIZEDSTRING(settings)
+    //       return allSettingsObject
+    //     } else {
+    //       console.log("no redis. else block.")
+    //       return await prisma.settings.findMany()
+    //       .then(async(settings:any) => {
+    //         if (settings) {
+    //           let settingsStrForRedis:any = SERIALIZESTRING(settings)
+    //           await redis.set("settings", settingsStrForRedis)
+    //           return settings
+    //         } else { return "no settings or 500 or 400 error!" }
+    //       })}})
+    // },   
+    // allDBsettings: async () => { return await prisma.settings.findMany() },   
+
 // these are the age, height, etc. settings for the user. These settings determine the water schedule. reminder is the notification intensity. 8am - 8pm is 8 - 16. notification intensity of 2 means every 2 hours get notified.
     userSettings: async (parent, args) => {
         let { id } = args        
@@ -59,7 +163,6 @@ export const resolvers = {
         // return { id, weight, height, age, reminder, start_time, end_time, reminder, activity, users_id } = settings 
       },
     // postgres data. This is the actual water cycle data that pertains to calendar day. User clicks, if they're within a block of time, success | failure
-    allDBdata: async () => { return await prisma.data.findMany() },
     
     allUserData: async (parent, args) => {
       const { users_id } = args
@@ -101,7 +204,12 @@ export const resolvers = {
           return { id: 0, google_id: 'yes', icon: 'yea', username: 'name', password: 'password', email: 'email', age: 1 }        
         }        
     },       
-                  
+    readRedisTest: async (parent, args) => {
+      const { key } = args
+      const value = await redis.get(key)    
+      return value
+    }, 
+
     },
     Mutation: {
     addUserSettings: async (parent, args) => {
