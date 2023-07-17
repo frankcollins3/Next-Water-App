@@ -2,20 +2,6 @@ import {gql} from 'apollo-server-micro';
 
 // the link object will have the following fields in:                    type Link { ... fields }
 export const typeDefs = gql`
-    type Link {
-        id: String
-        title: String
-        description: String
-        url: String
-        category: String
-        imageUrl: String
-        users: [String]
-    }
-
-    type Pokemon {
-        id: Int
-        name: String
-    }
 
     type Settings {
         id: Int
@@ -39,6 +25,17 @@ export const typeDefs = gql`
         age: Int
       }
 
+      type UsersLogin {
+        id: Int 
+        google_id: String
+        icon: String
+        username: String
+        password: String
+        email: String
+        age: Int
+        token: String        
+      }
+
     type Data {
         id: Int
         google_id: String
@@ -58,10 +55,9 @@ export const typeDefs = gql`
     }
 
     type Query {
-        links: [Link]!     
-        pokemon: Pokemon
+        readRedisTest(key: String!): String
 
-        allDBsettings: [Settings]!      
+        allDBsettings: [Settings]!     
         userSettings(id: Int!): Settings
 
         allDBusers: [Users]!
@@ -69,7 +65,9 @@ export const typeDefs = gql`
         allUserData(users_id: Int!): [Data]!
 
         idArgsReturnIcon(users_id: Int!): Users
-        userLogin(emailOrUsername: String!, password: String!): Users
+        userLogin(email: String!, password: String!): UsersLogin
+        
+
     }
 
     type Mutation {
