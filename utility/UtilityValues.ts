@@ -2,22 +2,28 @@ import $ from 'jquery'
 import CSS from './CSS'
 import bcrypt from "bcryptjs"
 
+import { PrismaClient } from "@prisma/client"
+const prisma = new PrismaClient()
+// const { PrismaClient } = require('@prisma/client');
+// const prisma = new PrismaClient()
+
 export const AgeArray = [1,2,3,4,5,6,7,8,9,10]
 export const ALPHABET = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 export const intervalTimeouts = [1000,2000]
 // export const intervalTimeouts = [1000,2000,3000,4000,5000]
 
-export const nothingFunc = () => { return }
+export function nothingFunc () { return }
+export const nothing = "nothing"
 
 export const passwordTogglevalue = (state:any, setState:any) => { setState(!state) }
 
-export const currentDayBorderOn = (elem:any) => {
+export function currentDayBorderOn (elem:any) {
         CSS($(elem), 'backgroundColor', '#bbeafe')
         CSS($(elem), 'borderTop', 'none')
         CSS($(elem), 'color', 'silver')                    
 }
 
-export const currentDayBorderOff = (elem:any) => {
+export function currentDayBorderOff (elem:any) {
         CSS($(elem), 'backgroundColor', '#dedede70')
         CSS($(elem), 'borderTop', '40px dotted #73defe')
         CSS($(elem), 'color', 'silver')              
@@ -40,7 +46,7 @@ const passwordGood:boolean = true;
 const ageGood:boolean = true;
 export const signupGood:boolean[] = [usernameGood, emailGood, passwordGood, ageGood];
 
-export const signupGoodCheck = (allusers, username, email, password, age, parentconfirm) => {
+export function signupGoodCheck (allusers, username, email, password, age, parentconfirm) {
         if (!allusers.includes(username) && username.length > 6 && username.length < 30) {
                 console.log("username good");
                 if (email.includes('@') && email.replace(/^.*\.(.*)$/, '$1') === "com" || email.replace(/^.*\.(.*)$/, '$1') === "net" || email.replace(/^.*\.(.*)$/, '$1') === "org") {
@@ -62,4 +68,10 @@ export const signupGoodCheck = (allusers, username, email, password, age, parent
 }
 
 export function SERIALIZESTRING (obj:any) { return JSON.stringify(obj) }
-export function SERIALIZEDSTRPARSE (str:string) { return JSON.parse(str) }
+export function PARSESERIALIZEDSTRING (str:string) { return JSON.parse(str) }
+
+// prisma utilities: (sent without invocation)
+export const prismaUserUtils = prisma.users.findMany
+export const prismaSettingsUtils = prisma.settings.findMany
+export const prismaDataUtils = prisma.data.findMany
+
