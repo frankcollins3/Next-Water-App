@@ -46,15 +46,26 @@ const dataRedisCheck = async () => {  // thinking about making this a func with 
   });
 }
 
+const userSettingsRedisCheck = async (id) => {  // thinking about making this a func with param
+          // string interpolation so that the cache data saved to redis corresponds to userId as well, concatenated with "userSettings" string that corresponds to this resolver function
+      return redis.get(`userSettings:${id}`, (error, users) => {
+        if (error) {
+          return error
+        } else {      
+          return users
+        }
+  });
+}
 
-// const datacheck = (data:any) => {
-//     if (typeof data !== "string") {
-//         return new Promise(async(resolve, reject) => {
-//           const allDataObject = PARSESERIALIZEDSTRING(data)
-//           return resolve(allDataObject)
-//         })
-//     }
-// }
+const userDataRedisCheck = async (id) => {
+      return redis.get(`userData:${id}`, (error, users) => {
+        if (error) {
+          return error
+        } else {
+          return 
+        }
+      })
+}
 
 export const resolvers = {
     Query: {
@@ -128,48 +139,56 @@ export const resolvers = {
       }
       // return await prisma.data.findMany() 
     },
-    // allDBdata: async () => { return await prisma.data.findMany() },
-    // allDBsettings: async () => { 
-    //   // return await prisma.settings.findMany() 
-    //   redis.get("settings", async (error, settings) => {
-    //     if (settings) {
-    //       console.log("settings if block REDIS!!!!")
-    //       const allSettingsObject = PARSESERIALIZEDSTRING(settings)
-    //       return allSettingsObject
-    //     } else {
-    //       console.log("no redis. else block.")
-    //       return await prisma.settings.findMany()
-    //       .then(async(settings:any) => {
-    //         if (settings) {
-    //           let settingsStrForRedis:any = SERIALIZESTRING(settings)
-    //           await redis.set("settings", settingsStrForRedis)
-    //           return settings
-    //         } else { return "no settings or 500 or 400 error!" }
-    //       })}})
-    // },   
-    // allDBsettings: async () => { return await prisma.settings.findMany() },   
-
-// these are the age, height, etc. settings for the user. These settings determine the water schedule. reminder is the notification intensity. 8am - 8pm is 8 - 16. notification intensity of 2 means every 2 hours get notified.
+// age, height, etc. userSettings that determine water schedule. reminder is the notification intensity. 8am - 8pm is 8 - 16. notification intensity of 2 means every 2 hours get notified.
     userSettings: async (parent, args) => {
+      // id that corresponds to postgres.table.user.id
         let { id } = args        
-        let allsettings = await prisma.settings.findMany()    
-        let settingsLength = allsettings.length + 1
-        let allusers = await prisma.users.findMany()
-        let me = allusers.filter(us => us.id === id)
-        let myage = me[0].age
-        let mySettings = allsettings.filter(settings => settings.users_id === id)
-        mySettings = mySettings[0]
-        return mySettings
+  // function that returns redis.get() return data (redis.get() is a promise which is why using an additional {new Promise} constructor is redundant and technically not DRY code.)
+        // evaluate the above function that returns the cache data or not.
+        let userSettingsRedis = await userSettingsRedisCheck(id)
+        // if cache data comes back good, the if block handles that:      we dont want to query the database, we want to query the cache and spare the user the latency of waiting for data
+        if (userSettingsRedis) {
+          // JSON.parse(userSettingsRedis) this is done because redis only accepts a string. Return this cache data below.
+          const allUserSettingsObject = PARSESERIALIZEDSTRING(userSettingsRedis)
+          console.log("userSettings redis block", userSettingsRedis)
+          return userSettingsRedis
+        } else {
+          // else block means there is no cache data & prisma must retrieve data from postgresDB to return to client.
+          console.log("NO redis. userSettings ELSE block!!!")
+          // prisma down here to separate it from being run in case there is cache data.      DB.users retrieves the id and the id is met within loop and comparison. return that settings Data
+          let allsettings = await prisma.settings.findMany()            
+          let settingsLength = allsettings.length + 1
+          let allusers = await prisma.users.findMany()
+          let me = allusers.filter(us => us.id === id)
+          let myage = me[0].age
+          let mySettings = allsettings.filter(settings => settings.users_id === id)
+          mySettings = mySettings[0]
+// before we return the graphQL data, set:    JSON.stringify(mySettings)        into the cache so that the next query can return cache from userSettingsRedisCache() / redis.get(`userSettings${id}`)
+          let mySettingsForRedis = SERIALIZESTRING(mySettings)
+          await redis.set(`userSettings:${id}`, mySettingsForRedis)
+          return mySettings
+        }
         // return { id, weight, height, age, reminder, start_time, end_time, reminder, activity, users_id } = settings 
       },
     // postgres data. This is the actual water cycle data that pertains to calendar day. User clicks, if they're within a block of time, success | failure
     
     allUserData: async (parent, args) => {
       const { users_id } = args
-      let alldata = await alldataDB()
-      const mydata = alldata.filter(waterCycleData => waterCycleData.users_id === users_id)
-      return mydata
+      let userDataRedis = await userDataRedisCheck(users_id)
+      if (userDataRedis) {
+        const allUserDataObject = PARSESERIALIZEDSTRING(userDataRedis)
+        console.log("userData redis block", userDataRedis)
+        return userDataRedis
+      } else {
+        console.log("NO redis. allUserData ELSE block!")
+        let alldata = await alldataDB()
+        const mydata = alldata.filter(waterCycleData => waterCycleData.users_id === users_id)
+        const myDataForRedis = SERIALIZESTRING(mydata)
+        await redis.set(`userData:${users_id}`, myDataForRedis)
+        return mydata
+      }
     },
+
     idArgsReturnIcon: async (parent, args) => {
       const { users_id } = args
       let allusers = await allusersDB() 
@@ -179,7 +198,10 @@ export const resolvers = {
       return icon
     },
     userLogin: async (parent, args) => {
-        const { emailOrUsername, password } = args              
+        const { emailOrUsername, password } = args 
+        const userLoginRedisCheck = async (emailOrUsername) => {
+          return redis.get(`userLogin:${emailOrUsername}`)
+        }             
         const allusers = await prisma.users.findMany()
         let emailBool = false
         emailOrUsername.includes('@') ? emailBool = true : false
@@ -189,10 +211,8 @@ export const resolvers = {
         } else {
           me = allusers.filter(us => us.username === emailOrUsername)
         }
-        me = me[0]          
-        // let me = allusers.filter(us => us.email || us.username === e mailOrUsername)
+        me = me[0]                  
         let myDBpassword = me.password
-        // handle account recovery over here
         if (!me) { throw new Error("Username or Password Don't match")}
   
         const passTheSalt = bcrypt.compareSync(password, myDBpassword)
