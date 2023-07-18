@@ -1,11 +1,7 @@
 import $ from 'jquery'
 import CSS from './CSS'
 import bcrypt from "bcryptjs"
-
-import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
-// const { PrismaClient } = require('@prisma/client');
-// const prisma = new PrismaClient()
+import crypto from "crypto"
 
 export const AgeArray = [1,2,3,4,5,6,7,8,9,10]
 export const ALPHABET = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
@@ -46,10 +42,10 @@ const passwordGood:boolean = true;
 const ageGood:boolean = true;
 export const signupGood:boolean[] = [usernameGood, emailGood, passwordGood, ageGood];
 
-export function signupGoodCheck (allusers, username, email, password, age, parentconfirm) {
+export function signupGoodCheck (allusers, allemails, username, email, password, age, parentconfirm) {
         if (!allusers.includes(username) && username.length > 6 && username.length < 30) {
                 console.log("username good");
-                if (email.includes('@') && email.replace(/^.*\.(.*)$/, '$1') === "com" || email.replace(/^.*\.(.*)$/, '$1') === "net" || email.replace(/^.*\.(.*)$/, '$1') === "org") {
+if (!allemails.includes(email) && email.includes('@') && email.replace(/^.*\.(.*)$/, '$1') === "com" || email.replace(/^.*\.(.*)$/, '$1') === "net" || email.replace(/^.*\.(.*)$/, '$1') === "org") {
                         console.log("email good")
                         if (/[\!@#$%^&*\(\)]/.test(password) && /[A-Z]/.test(password) && /[0-9]/.test(password)) {
                         console.log("password good")
@@ -70,8 +66,11 @@ export function signupGoodCheck (allusers, username, email, password, age, paren
 export function SERIALIZESTRING (obj:any) { return JSON.stringify(obj) }
 export function PARSESERIALIZEDSTRING (str:string) { return JSON.parse(str) }
 
+export const JWTsecretKeyMaker = () => { return crypto.randomBytes(64).toString('hex') }
+
 // prisma utilities: (sent without invocation)
-export const prismaUserUtils = prisma.users.findMany
-export const prismaSettingsUtils = prisma.settings.findMany
-export const prismaDataUtils = prisma.data.findMany
+
+// export const prismaUserUtils = prisma.users.findMany
+// export const prismaSettingsUtils = prisma.settings.findMany
+// export const prismaDataUtils = prisma.data.findMany
 
