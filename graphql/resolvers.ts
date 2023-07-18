@@ -1,8 +1,17 @@
 import axios from 'axios'
 import bcrypt from "bcryptjs"
 import { hashPasser, SERIALIZESTRING, PARSESERIALIZEDSTRING } from 'utility/UtilityValues';
+import {JWTsecretKeyMaker} from "utility/UtilityValues"
+
+import passport from "../utility/passport"; 
+// import passport from "utility/passport"
+console.log('passport')
+console.log(passport)
+import jwt from "jsonwebtoken"
+import {setCookie} from "utility/cookies"
 
 import Redis from 'ioredis'
+
 const redis = new Redis({
   port: 6379,
   host: '127.0.0.1'
@@ -190,7 +199,8 @@ export const resolvers = {
     },
 
     idArgsReturnIcon: async (parent, args) => {
-      const { users_id } = args
+      const { users_id } = args    
+
       let allusers = await allusersDB() 
       let me = allusers.filter(user => user.id === users_id)   
       // me = me[0]            
@@ -198,32 +208,66 @@ export const resolvers = {
       return icon
     },
     userLogin: async (parent, args) => {
-        const { emailOrUsername, password } = args 
-        const userLoginRedisCheck = async (emailOrUsername) => {
-          return redis.get(`userLogin:${emailOrUsername}`)
-        }             
-        const allusers = await prisma.users.findMany()
-        let emailBool = false
-        emailOrUsername.includes('@') ? emailBool = true : false
-        let me; 
-        if (emailBool) {
-          me = allusers.filter(us => us.email === emailOrUsername)
-        } else {
-          me = allusers.filter(us => us.username === emailOrUsername)
-        }
-        me = me[0]                  
-        let myDBpassword = me.password
-        if (!me) { throw new Error("Username or Password Don't match")}
+      let res = {...args}
+    // userLogin: async (parent, args, {res}) => {
+      const { email, password } = args
+      try {
+        // promise with standard passport.authenticate to hit localDB only. resolve the user or reject with the error
+        const user:any = await new Promise((resolve, reject) => {
+          passport.authenticate('local', { session: false }, (err, user, info) => {
+            if (err || !user) {
+              return reject(info ? new Error(info.message) : err);
+            }
+            resolve(user);
+          })({ body: { email, password } });
+        });
+
+        // crpyto.randomBytes.toString('hex') return(string)... this secures the JWT.
+        const SECRET_KEY = await JWTsecretKeyMaker()      
+
+        
+  // generate token.      also: concatenate the user.id onto the end of the token string so that when:   user logs in -> page nav -> .getCookieToken() -> regexIdFromToken -> fetchDB(user.id)
+        const token = jwt.sign({ id: user.id }, SECRET_KEY); 
+        const tokenWithId = `${token}id:${user.id}`
+      
+        return {
+          id: user.id,
+          googleId: user.google_id,
+          icon: user.icon,
+          username: user.username,
+          password: user.password,
+          email: user.email,
+          age: user.age,
+          token: tokenWithId, 
+          
+        };
+      } catch (error) {
+        console.log("error", error)
+        throw new Error('An error occurred during login. Please try again.');
+      }
+    },
+    // userLogin: async (parent, args) => {
+    //     const { email, password } = args     
+    //     const allusers = await prisma.users.findMany()
+    //     let emailBool = false
+    //     // emailOrUsername.includes('@') ? emailBool = true : false        
+    //     let me = allusers.filter(us => us.email === email)      
+    //     me = me[0]                
+    //     console.log('me', me)  
+    //     let myDBpassword = me.password
+    //     if (!me) { throw new Error("Username or Password Don't match") } 
   
-        const passTheSalt = bcrypt.compareSync(password, myDBpassword)
+    //     const passTheSalt = bcrypt.compareSync(password, myDBpassword)
   
-        if (passTheSalt) {
-          return { id: me.id, googleId: me.google_id, icon: me.icon, username: me.username, password: me.password, email: me.email, age: me.age }
-        }
-         else {
-          return { id: 0, google_id: 'yes', icon: 'yea', username: 'name', password: 'password', email: 'email', age: 1 }        
-        }        
-    },       
+    //     if (passTheSalt) {
+    //       console.log("hey pass the salt")
+    //       return { id: me.id, googleId: me.google_id, icon: me.icon, username: me.username, password: me.password, email: me.email, age: me.age }
+    //     }
+    //     else {
+    //        console.log("oh no were passed the salt")
+    //       return { id: 0, google_id: 'yes', icon: 'yea', username: 'name', password: 'password', email: 'email', age: 1 }        
+    //     }        
+    // },       
     readRedisTest: async (parent, args) => {
       const { key } = args
       const value = await redis.get(key)    
