@@ -70,7 +70,6 @@ const Boop = ({ rotateAngle, speed, children, setImg, iconScreenFlag, showBoat, 
       iconScreenFlag()
       if (boat === false) showBoat()
       $(event.target)
-      .css('border', '5px solid hotpink')
       .animate({
         top: '100px'
       }, 500)       
