@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import $ from 'jquery'
-import ConnectedSignupLoginChecker from 'src/components/elements/SignupLoginChecker';
 
 interface Props {
   rotateAngle: number,
@@ -10,9 +9,10 @@ interface Props {
   iconScreenFlag: any,
   showBoat: any,
   boat: boolean
+  className: string;
 }
 
-const Boop = ({ rotateAngle, speed, children, setImg, iconScreenFlag, showBoat, boat }: Props) => {
+const Boop = ({ rotateAngle, speed, children, setImg, iconScreenFlag, showBoat, boat, className }: Props) => {
   
   const targetElemRef:any = useRef(null)
 
@@ -82,7 +82,7 @@ const Boop = ({ rotateAngle, speed, children, setImg, iconScreenFlag, showBoat, 
     <div className="boop">
       {React.Children.map(children, (child, index) => {
         const styledChild = React.cloneElement(child, {
-          className: 'boop-child',
+          className: className,
           style: {
             margin: 0
           },
