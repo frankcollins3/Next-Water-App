@@ -2,14 +2,9 @@ import axios from 'axios'
 import bcrypt from "bcryptjs"
 import { hashPasser, SERIALIZESTRING, PARSESERIALIZEDSTRING } from 'utility/UtilityValues';
 import {JWTsecretKeyMaker} from "utility/UtilityValues"
-
+import puppeteer from "puppeteer"
 import passport from "../utility/passport"; 
-// import passport from "utility/passport"
-console.log('passport')
-console.log(passport)
 import jwt from "jsonwebtoken"
-import {setCookie} from "utility/cookies"
-
 import Redis from 'ioredis'
 
 const redis = new Redis({
@@ -200,10 +195,8 @@ export const resolvers = {
 
     idArgsReturnIcon: async (parent, args) => {
       const { users_id } = args    
-
       let allusers = await allusersDB() 
       let me = allusers.filter(user => user.id === users_id)   
-      // me = me[0]            
       let icon = me.icon ? me.icon : "/water_img/bite.png"
       return icon
     },
@@ -224,7 +217,6 @@ export const resolvers = {
 
         // crpyto.randomBytes.toString('hex') return(string)... this secures the JWT.
         const SECRET_KEY = await JWTsecretKeyMaker()      
-
         
   // generate token.      also: concatenate the user.id onto the end of the token string so that when:   user logs in -> page nav -> .getCookieToken() -> regexIdFromToken -> fetchDB(user.id)
         const token = jwt.sign({ id: user.id }, SECRET_KEY); 
@@ -246,28 +238,44 @@ export const resolvers = {
         throw new Error('An error occurred during login. Please try again.');
       }
     },
-    // userLogin: async (parent, args) => {
-    //     const { email, password } = args     
-    //     const allusers = await prisma.users.findMany()
-    //     let emailBool = false
-    //     // emailOrUsername.includes('@') ? emailBool = true : false        
-    //     let me = allusers.filter(us => us.email === email)      
-    //     me = me[0]                
-    //     console.log('me', me)  
-    //     let myDBpassword = me.password
-    //     if (!me) { throw new Error("Username or Password Don't match") } 
-  
-    //     const passTheSalt = bcrypt.compareSync(password, myDBpassword)
-  
-    //     if (passTheSalt) {
-    //       console.log("hey pass the salt")
-    //       return { id: me.id, googleId: me.google_id, icon: me.icon, username: me.username, password: me.password, email: me.email, age: me.age }
-    //     }
-    //     else {
-    //        console.log("oh no were passed the salt")
-    //       return { id: 0, google_id: 'yes', icon: 'yea', username: 'name', password: 'password', email: 'email', age: 1 }        
-    //     }        
-    // },       
+
+    puppeteerWebIcon: async (parent, args) => {
+      const { searchTerm } = args
+
+      const backupArr = [ '/water_img/water-park.png', '/water_img/manta-ray.png', '/water_img/aqua-jogging.png', '/water_img/whale.png', ];
+      const randomValue = backupArr[Math.floor(Math.random() * backupArr.length)].trim();
+
+    
+        const browser = await puppeteer.launch({ headless: true });
+        const page = await browser.newPage();
+    
+        // Navigate to Google Images
+        await page.goto(
+          `https://www.google.com/search?q="${searchTerm}"}&tbm=isch`
+        );
+    
+        // Wait for the images to load
+        await page.waitForSelector('.rg_i', { timeout: 60000 });
+    
+        // Evaluate the page and extract the first image URL
+        const imageUrl = await page.evaluate(() => {
+          const image:any = document.querySelector('.rg_i');
+          const url = image.getAttribute('data-src') || image.getAttribute('src');
+          return url;
+        })
+        // If the URL is present, return the base64 encoded image
+        if (imageUrl) {
+            const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+            const base64Image = Buffer.from(response.data, 'binary').toString('base64');
+            return `data:${response.headers['content-type']};base64,${base64Image}`;
+        }
+        else { 
+          console.error('Error fetching image:', randomValue);
+          return randomValue 
+        }   
+        // If the URL is not present or fetching fails, return the random backup image
+    },
+
     readRedisTest: async (parent, args) => {
       const { key } = args
       const value = await redis.get(key)    
