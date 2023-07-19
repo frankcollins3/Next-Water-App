@@ -67,7 +67,7 @@ export const typeDefs = gql`
         idArgsReturnIcon(users_id: Int!): Users
         userLogin(email: String!, password: String!): UsersLogin
         
-
+        puppeteerWebIcon(searchTerm: String!): String!
     }
 
     type Mutation {
