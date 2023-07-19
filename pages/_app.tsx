@@ -1,6 +1,15 @@
 // next related imports to get page up and running:
+import Link from 'next/link'
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
+import dotenv from "dotenv"
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useRouter } from 'next/router';
+import $ from 'jquery'
+
+// load env variables for prisma
+dotenv.config();
 
 // styling
 import 'styles/globals.css';
@@ -15,20 +24,27 @@ import Container from 'react-bootstrap/Container';
 import Main from 'components/webpage/Main/Main';
 
 // redux state management:
-import { useRouter } from 'next/router';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { useStore } from 'react-redux'
+import { useSelector, useDispatch } from "react-redux"
 import rootReducer from 'redux/store/rootReducer';
+import {  SET_ALL_USERNAMES } from "redux/logInOutGoogle/logInOutGoogleSlice"
 
+// utils.js
+import {useImage} from "Contexts/ImgContext"
 
 const store = configureStore({
   reducer: rootReducer,
 });
 
-
 export default function App({ Component, pageProps }: AppProps) {
-  const router = useRouter();
+
+  const { mouseDroplet } = useImage()
+
+  useEffect( () => {    
+  }, [])
+  
 
   const test = () => {
     // Test function logic
@@ -43,16 +59,17 @@ export default function App({ Component, pageProps }: AppProps) {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <div className="App">
+      <div style={{ cursor: `url("${mouseDroplet}"), auto` }} className="App">
+      {/* <div style={{ cursor: `url('${mouseDroplet}')`, border: '5px solid green' }} className="App"> */}
         <Provider store={store}>
-          <ImgProvider>
+          <ImgProvider>          
+
             <Container className="navbar">
               <Navbar2 />
             </Container>
-            <Main>
+                        
               <Component {...pageProps} />
-            </Main>
-            <button onClick={test} style={{ backgroundColor: 'purple', borderRadius: '50%', height: '100px', width: '100px' }}></button>
+
           </ImgProvider>
         </Provider>
       </div>
