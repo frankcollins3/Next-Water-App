@@ -1,5 +1,6 @@
 import $ from 'jquery'
 import {useState} from "react"
+import axios from "axios"
 
 // components and styles
 import Container from 'react-bootstrap/Container'
@@ -8,12 +9,12 @@ import styles from "./SelectedIconImage.module.scss"
 // @redux/toolkit global state management
 import {useSelector, useDispatch} from 'react-redux'
 import {RootState} from "redux/store/rootReducer"
-import { SET_NON_GOOGLE_IMG_URL } from "redux/logInOutGoogle/logInOutGoogleSlice"
-import { TOGGLE_SELECTED_WEB_ICONS } from "redux/icons/iconsSlice"
+import { SET_NON_GOOGLE_IMG_URL, TOGGLE_SUBMIT_INPUT_DATA, TOGGLE_SHOW_FORM } from "redux/logInOutGoogle/logInOutGoogleSlice"
+import { TOGGLE_SELECTED_WEB_ICONS, TOGGLE_SELECT_ICON_SCREEN } from "redux/icons/iconsSlice"
 
 // utils
 import { useImage } from "Contexts/ImgContext"
-import { SelectedIconImgStr } from "utility/interfaceNtypes"
+import { SelectedIconImgStr, UsersLoginInterface } from "utility/interfaceNtypes"
 import { flexPropertyColumnCombo, flexPropertyRowCombo, CSS } from 'utility/UtilityValues'
 
 // WebIconBoatGrid && <
@@ -30,6 +31,14 @@ export default function SelectedIconImage (props:any) {
     const [fadeImgChange, setFadeImgChange] = useState(false)
     
     const NON_GOOGLE_IMG_URL = useSelector((state:RootState) => state.logInOutGoogle.NON_GOOGLE_IMG_URL)
+    const USERNAME_INPUT = useSelector((state:RootState) => state.logInOutGoogle.USERNAME_INPUT)
+    const EMAIL_INPUT = useSelector((state:RootState) => state.logInOutGoogle.EMAIL_INPUT)
+    const AGE_INPUT = useSelector((state:RootState) => state.logInOutGoogle.AGE_INPUT)
+    const PASSWORD_INPUT = useSelector((state:RootState) => state.logInOutGoogle.PASSWORD_INPUT)
+
+    
+    const SELECTED_WEB_ICONS = useSelector((state:RootState) => state.icons.SELECTED_WEB_ICONS)
+    const SELECT_ICON_SCREEN = useSelector((state:RootState) => state.icons.SELECT_ICON_SCREEN)
 
     console.log('props', props)
     console.log('NON_GOOGLE_IMG_URL', NON_GOOGLE_IMG_URL)
@@ -58,12 +67,40 @@ export default function SelectedIconImage (props:any) {
         $('#close').detach()
         $('#confirmation').detach()
         $(event.target).css('opacity', '1.0')
-        $('#iconID').addClass(styles.vanishImage)        
-        setTimeout( () => $('.pre').fadeOut(), 1250 )
-        setTimeout( () => $('.pre').fadeIn(), 2750 )
-        setConfirmState(true)
+
+        axios
+.post('/api/graphql', {
+  query: `
+  mutation {
+    userSignup(username: "${USERNAME_INPUT}", password: "${PASSWORD_INPUT}", email: "${EMAIL_INPUT}", age: ${AGE_INPUT}, icon: "${NON_GOOGLE_IMG_URL}", google_id: "no google-id") {
+      username,
+      password,
+      email,
+      age,
+      icon,
+      google_id
+    }
+  }
+  `
+}).then( (user:any) => {
+// }).then( (user:UsersLoginInterface) => {
+    console.log('user * * * * * * * FROM THE ICON WHICH IS THE ONLY PLACE TO DO THAT!', user)
+
+    $('#iconID').addClass(styles.vanishImage)        
+    setTimeout( () => $('.pre').fadeOut(), 1250 )
+    setTimeout( () => $('.pre').fadeIn(), 2750 )
+    setTimeout( () => {
+        dispatch(TOGGLE_SUBMIT_INPUT_DATA())
+        dispatch(TOGGLE_SHOW_FORM('login'))
+    }, 3000)
+    setConfirmState(true)
+})
+
+
         // $('pre').fadeIn()
-        setTimeout( () => { setFadeImgChange(true) }, 1800)
+        setTimeout( () => { 
+            setFadeImgChange(true) }, 
+        1800)
 
     }
     
@@ -72,7 +109,8 @@ export default function SelectedIconImage (props:any) {
         $('#confirmation').css("opacity", "0.1")
         $(event.target).css('opacity', '1.0')
 
-        dispatch(TOGGLE_SELECTED_WEB_ICONS())
+        {SELECTED_WEB_ICONS && dispatch(TOGGLE_SELECTED_WEB_ICONS())}
+        {SELECT_ICON_SCREEN && dispatch(TOGGLE_SELECT_ICON_SCREEN())}
     }
 
     
@@ -88,15 +126,8 @@ export default function SelectedIconImage (props:any) {
                     confirmState === false
                     ? <pre className={preClassToTarget}>  New <span className={styles.span}>Wave</span> Icon?  </pre>  
                     : 
-                    <pre className={preClassToTarget}>  We <span className={styles.span}>Wave</span> Back to You <span className={styles.span}> USER! </span>  </pre>
-                }
-                                                 
-                
-                {/* <Container className={flexPropertyRowCombo}>
-                <pre className={styles.pre}> We Wave back to you User! </pre>
-                <Container/>  */}
-            
-                        
+                    <pre className={preClassToTarget}>  We <span className={styles.span}>Wave</span> Back to You <span className={styles.span}> {USERNAME_INPUT} </span>  </pre>
+                }                                                 
 
             <Container id={styles.selectBtnCont} className={flexPropertyRowCombo}>
             <img onClick={confirmClick} id="confirmation" className={sty} src={confirmation}/>
