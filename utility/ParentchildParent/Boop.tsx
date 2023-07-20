@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import $ from 'jquery'
+import {useDispatch} from "react-redux"
 
 interface Props {
   rotateAngle: number,
@@ -13,6 +14,8 @@ interface Props {
 }
 
 const Boop = ({ rotateAngle, speed, children, setImg, iconScreenFlag, showBoat, boat, className }: Props) => {
+
+  const dispatch = useDispatch()
   
   const targetElemRef:any = useRef(null)
 
@@ -58,7 +61,7 @@ const Boop = ({ rotateAngle, speed, children, setImg, iconScreenFlag, showBoat, 
   
   const boopBehaviorLeave = () => { setIsRotated(false); };
 
-  const elemClick = (event:any) => { 
+  const elemClick = (event:any) => {     
     let src:string = event.target.src    
     console.log('src')
     console.log(src)
@@ -66,8 +69,9 @@ const Boop = ({ rotateAngle, speed, children, setImg, iconScreenFlag, showBoat, 
     let hrefCheck:string = src.slice(0, 4);
     let imgCheck:string = src.slice(length - 3, length)    
     if (hrefCheck === 'http' && imgCheck === 'png' || imgCheck === 'jpeg') {
-      setImg({ payload: event.target.src }) 
-      iconScreenFlag()
+      // dispatch(setImg(src))
+      dispatch(setImg(src))
+      dispatch(iconScreenFlag())
       if (boat === false) showBoat()
       $(event.target)
       .animate({
@@ -87,7 +91,7 @@ const Boop = ({ rotateAngle, speed, children, setImg, iconScreenFlag, showBoat, 
           },
           onMouseEnter: boopBehaviorEnter,
           onMouseLeave: boopBehaviorLeave,
-          onClick: elemClick
+          onClick: elemClick 
         });
 
         return styledChild;
