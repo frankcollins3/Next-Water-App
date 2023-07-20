@@ -66,6 +66,7 @@ type imgContextType = {
     clouds: string;
     window: string;
     curtain: string;
+    like: string;
     googleBigG: string;
     googleRedO: string;
     googleYellowO: string;
@@ -158,13 +159,14 @@ const imgDefaults: imgContextType = {
     clouds: `${imagePrefix}clouds.png`,
     window: `${imagePrefix}window.png`,
     curtain: `${imagePrefix}curtain.png`,
+    like: `${imagePrefix}like.png`,
     googleBigG: `${googlePrefix}google_big_g.png`,
     googleRedO: `${googlePrefix}google_red_o.png`,
     googleYellowO: `${googlePrefix}google_yellow_o.png`,
     googleLilG: `${googlePrefix}google_lil_g.png`,
     googleL: `${googlePrefix}google_l.png`,
     googleE: `${googlePrefix}google_e.png`,    
-    multiColorG: `${googlePrefix}multi_color_g`,
+    multiColorG: `${googlePrefix}multi_color_g.png`,
     puppeteerSearchTerms: ["blue-ocean", "blue-water", "blue-river", "blue-seacreature", "blue-fish", "blue-octopus", "blue-shark"],
     ReusableImageObject: { src: '', size: 0, unit: '', className: '', id: '', func: '', event: ''},
     TestUser: { email: 'testwaters@gmail.com', googleId: 'testgoogle', icon: '/water_img/hand.png', id: 777, password: 'fullcup', username: 'testwaters'  }    
@@ -209,7 +211,7 @@ export function ImgProvider({ children }: Props) {
     const [location, setLocation] = useState<string>(`${imagePrefix}location.png`);
     const [target, setTarget] = useState<string>(`${imagePrefix}target.png`);
     const [twitter, setTwitter] = useState<string>(`${imagePrefix}twitter.png`);
-    const [hand, setHand] = useState<string>(`${imagePrefix}setHand.png`);
+    const [hand, setHand] = useState<string>(`${imagePrefix}hand.png`);
     const [wapp, setWapp] = useState<string>(`${imagePrefix}wapp.png`);
     const [waterDropWhite, setWaterDropWhite] = useState<string>(`${imagePrefix}water-drop-white.png`);
     const [waterDrop, setWaterDrop] = useState<string>(`${imagePrefix}water-drop`);
@@ -245,6 +247,7 @@ export function ImgProvider({ children }: Props) {
     const [window, setWindow] = useState<string>(`${imagePrefix}window.png`);
     const [curtain, setCurtain] = useState<string>(`${imagePrefix}curtain.png`);
     const [inkBottle, setInkBottle] = useState<string>(`${imagePrefix}ink-bottle.png`);
+    const [like, setLike] = useState<string>(`${imagePrefix}like.png`);
     const [googleBigG, setGoogleBigG] = useState<string>(`${googlePrefix}google_big_g.png`);
     const [googleRedO, setGoogleRedO] = useState<string>(`${googlePrefix}google_red_o.png`);
     const [googleYellowO, setGoogleYellowO] = useState<string>(`${googlePrefix}google_yellow_o.png`);
@@ -320,6 +323,7 @@ export function ImgProvider({ children }: Props) {
     clouds,   
     window,
     curtain,
+    like,
     googleBigG,
     googleRedO,
     googleYellowO,
