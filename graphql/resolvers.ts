@@ -220,7 +220,7 @@ export const resolvers = {
         
   // generate token.      also: concatenate the user.id onto the end of the token string so that when:   user logs in -> page nav -> .getCookieToken() -> regexIdFromToken -> fetchDB(user.id)
         const token = jwt.sign({ id: user.id }, SECRET_KEY); 
-        const tokenWithId = `${token}id:${user.id}`
+        // const tokenWithId = `${token}***${user.id}`
       
         return {
           id: user.id,
@@ -230,7 +230,8 @@ export const resolvers = {
           password: user.password,
           email: user.email,
           age: user.age,
-          token: tokenWithId, 
+          token: token, 
+          // token: tokenWithId, 
           
         };
       } catch (error) {
@@ -239,14 +240,18 @@ export const resolvers = {
       }
     },
 
-    puppeteerWebIcon: async (parent, args) => {
-      const { searchTerm } = args
-
-      const backupArr = [ '/water_img/water-park.png', '/water_img/manta-ray.png', '/water_img/aqua-jogging.png', '/water_img/whale.png', ];
-      const randomValue = backupArr[Math.floor(Math.random() * backupArr.length)].trim();
-
+      puppeteer: async (parent, args) => {
+        const { searchTerm } = args;
+        const backupArr = [
+          '/water_img/water-park.png',
+          '/water_img/manta-ray.png',
+          '/water_img/aqua-jogging.png',
+          '/water_img/whale.png',
+        ];
+        const randomValue = "/water_img/whale.png";
+        // const randomValue = backupArr[Math.floor(Math.random() * backupArr.length)];
     
-        const browser = await puppeteer.launch({ headless: true });
+        const browser = await puppeteer.launch({ headless: "new" });
         const page = await browser.newPage();
     
         // Navigate to Google Images
@@ -261,27 +266,24 @@ export const resolvers = {
         const imageUrl = await page.evaluate(() => {
           const image:any = document.querySelector('.rg_i');
           const url = image.getAttribute('data-src') || image.getAttribute('src');
-          return url;
-        })
+          return url || randomValue
+        }).catch(() => {
+          return randomValue;
+        });
         // If the URL is present, return the base64 encoded image
         if (imageUrl) {
+
+          try {
             const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
             const base64Image = Buffer.from(response.data, 'binary').toString('base64');
             return `data:${response.headers['content-type']};base64,${base64Image}`;
-        }
-        else { 
-          console.error('Error fetching image:', randomValue);
-          return randomValue 
-        }   
+          } catch (error) {
+            console.error('Error fetching image:', error);
+          }
+        }    
         // If the URL is not present or fetching fails, return the random backup image
-    },
-
-    readRedisTest: async (parent, args) => {
-      const { key } = args
-      const value = await redis.get(key)    
-      return value
-    }, 
-
+        return randomValue;
+      },
     },
     Mutation: {
     addUserSettings: async (parent, args) => {
@@ -392,8 +394,8 @@ export const resolvers = {
             id: autoIncrementUserId,
             username: username,
             password: passHasher,
-            // google_id: google_id,
-            // icon: icon,
+            google_id: google_id,
+            icon: icon,
             email: email,
             age: age
           }
