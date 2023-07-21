@@ -4,9 +4,8 @@ import axios from 'axios'
 // @redux/toolkit global state management
 import { RootState } from 'redux/store/rootReducer';
 import { useSelector, useDispatch } from 'react-redux';
-import { 
-    TOGGLE_PASSWORD_SHOW_CLICK
- } from "redux/logInOutGoogle/logInOutGoogleSlice"
+import { TOGGLE_PASSWORD_SHOW_CLICK, TOGGLE_LOGIN_PASSWORD_SHOW_CLICK, TOGGLE_SUBMIT_INPUT_DATA, SET_CURRENT_USER, SET_LOGIN_MSG } from "redux/logInOutGoogle/logInOutGoogleSlice"
+import { SET_CURRENT_PAGE } from "redux/main/mainSlice"
 
 // components  
 import Container from "react-bootstrap/Container"
@@ -17,61 +16,92 @@ import Captcha from "components/elements/Captcha"
 
 // utils
 import {useImage} from "Contexts/ImgContext"
+import {signupGoodCheck} from "utility/UtilityValues"
+import {UsersLoginInterface} from "utility/interfaceNtypes"
+
+// queries for GraphQL
+import {userLoginQueryStringFunc} from "graphql/queries"
+import { getCookie, clearCookie, userIdFromCookie } from "utility/cookies"
 
 export default function LoginSignupForm() {
     const dispatch = useDispatch()
+
     const INPUT_FOCUS = useSelector((state: RootState) => state.logInOutGoogle.INPUT_FOCUS);
+    const LOGIN_INPUT_FOCUS = useSelector((state: RootState) => state.logInOutGoogle.LOGIN_INPUT_FOCUS);
     const PASSWORD_SHOW_CLICK = useSelector((state: RootState) => state.logInOutGoogle.PASSWORD_SHOW_CLICK);
     const PASSWORD_SHOW = useSelector((state: RootState) => state.logInOutGoogle.PASSWORD_SHOW);
     const DISPLAY_FORM = useSelector((state: RootState) => state.logInOutGoogle.DISPLAY_FORM);
     const LOGIN_MSG = useSelector((state: RootState) => state.logInOutGoogle.LOGIN_MSG);
+    const ALL_USERNAMES = useSelector((state: RootState) => state.logInOutGoogle.ALL_USERNAMES);
+    const ALL_EMAILS = useSelector((state: RootState) => state.logInOutGoogle.ALL_EMAILS);
 
     const INCORRECT_LOGIN_ATTEMPT = useSelector((state: RootState) => state.logInOutGoogle.INCORRECT_LOGIN_ATTEMPT);
     const USERNAME_INPUT = useSelector((state: RootState) => state.logInOutGoogle.USERNAME_INPUT);
     const PASSWORD_INPUT = useSelector((state: RootState) => state.logInOutGoogle.PASSWORD_INPUT);
     const EMAIL_INPUT = useSelector((state: RootState) => state.logInOutGoogle.EMAIL_INPUT);
     const AGE_INPUT = useSelector((state: RootState) => state.logInOutGoogle.AGE_INPUT);
-
-
-
+    const PARENT_CONFIRM = useSelector((state: RootState) => state.logInOutGoogle.PARENT_CONFIRM)
+    const EMAIL_OR_USERNAME_LOGIN_INPUT = useSelector((state: RootState) => state.logInOutGoogle.EMAIL_OR_USERNAME_LOGIN_INPUT)
+    const PASSWORD_LOGIN_INPUT = useSelector((state: RootState) => state.logInOutGoogle.PASSWORD_LOGIN_INPUT)
 
     const { faucet, statistics } = useImage()
 
     const showPassIconClick = () => { dispatch(TOGGLE_PASSWORD_SHOW_CLICK()) }
+    const loginShowPassIconClick = () => { dispatch(TOGGLE_LOGIN_PASSWORD_SHOW_CLICK()) }
 
-    const submitFaucetClick = () => {
-        console.log(USERNAME_INPUT)
-        console.log(typeof USERNAME_INPUT)
-        console.log(PASSWORD_INPUT)
-        console.log(EMAIL_INPUT)
-        console.log(AGE_INPUT)
+    const submitFaucetClick = async () => {
         
-        axios
-    .post('/api/graphql', {
-      query: `
-        mutation {
-          addUser(
-            id: 0,
-            google_id: "no google-id", 
-            icon: "/water_img/panda.png",
-            username: "${USERNAME_INPUT}",
-            password: "${PASSWORD_INPUT}", 
-            email:  "${EMAIL_INPUT}",
-            age: ${AGE_INPUT}
-          ) {
-            id, google_id, icon, username, email, password, age
-          }
+        // can make this a callback function with username, password, email, age parameters. well done
+
+        if (DISPLAY_FORM === 'signup') {
+            const checkSignup = signupGoodCheck(ALL_USERNAMES, ALL_EMAILS, USERNAME_INPUT, EMAIL_INPUT, PASSWORD_INPUT, AGE_INPUT, PARENT_CONFIRM)
+            if (checkSignup === true) {
+                dispatch(SET_CURRENT_USER({ username: USERNAME_INPUT, email: EMAIL_INPUT, password: PASSWORD_INPUT, age: AGE_INPUT }))
+
+                    dispatch(TOGGLE_SUBMIT_INPUT_DATA())
+                    dispatch(SET_CURRENT_PAGE("/MeIcon"))
+            } else return 
+        } else if (DISPLAY_FORM === 'login') {
+            const userLoginQuery = userLoginQueryStringFunc(EMAIL_OR_USERNAME_LOGIN_INPUT, PASSWORD_LOGIN_INPUT)            
+            axios
+            .post('/api/graphql', {
+            query: `${userLoginQuery}`
+            }).then(async(loginUser:any) => {
+                let userLogin = loginUser.data.data.userLogin
+                console.log('userLogin', userLogin)
+                const pageCookie = getCookie()            
+                console.log('pageCookie', pageCookie)
+                clearCookie(pageCookie)
+
+                
+                
+                if (userLogin !== null) {
+                    console.log("atleast were in here")
+    const cookiePROMISE = new Promise( (resolve:any, reject:any) => {
+                        document.cookie = `token=${userLogin.token}; max-age=${7 * 24 * 60 * 60}; path=/;`;                            
+                        const pageCookie = getCookie()
+                        resolve(pageCookie || 'no milk no cookies')
+                    })
+                    cookiePROMISE
+                    .then( (promisecookie) => {                        
+                        console.log("cookie here too", promisecookie)
+                        const promisecookieID = userIdFromCookie(promisecookie)
+                        console.log("promisecookieID", promisecookieID)
+                        dispatch(SET_LOGIN_MSG("welcome back!"))
+                    })
+
+                    // const promisecookie = await cookiePROMISE
+                    // console.log('promisecookie', promisecookie)
+                    // const promisecookieID = userIdFromCookie(promisecookie)
+                    // console.log('promisecookieID', promisecookieID)
+                
+
+                } else {
+                    dispatch(SET_LOGIN_MSG("Dry Login. Try Again"))
+                    setTimeout( () => dispatch(SET_LOGIN_MSG("")), 1000)
+                }
+            })
         }
-      `,
-    })
-    .then((data: any) => {
-      console.log('data');
-      console.log(data);
-    })
-    .catch((err: any) => {
-      console.log('err');
-      console.log(err);
-    });
 
 
     }
@@ -81,8 +111,7 @@ export default function LoginSignupForm() {
 
             <>
         {
-            DISPLAY_FORM === "signup"
-            ?
+            DISPLAY_FORM === "signup" &&
             <form className={styles.signupLoginForm} id={styles.signupForm}>                         
             <img onClick={submitFaucetClick} className={styles.submitFaucet} src={faucet}/>                    
                         <SignupInput inputType={'username'}/>
@@ -98,15 +127,13 @@ style={{ border: 'none', opacity: PASSWORD_SHOW_CLICK ? "1.0" : PASSWORD_SHOW ? 
                         src={statistics}
                                 />
                                                         
-                        { INPUT_FOCUS ? <SignupLoginChecker loginstate={INPUT_FOCUS} /> : <pre> </pre> }                                                
+                        { INPUT_FOCUS && <SignupLoginChecker loginstate={INPUT_FOCUS} />  }                                                
                         </form>
-                        // </div>
-                        :
-                        <pre></pre>
+                        // </div>                                             
                     }
+
                     {
-                        DISPLAY_FORM === "login"
-                        ?                        
+                        DISPLAY_FORM === "login" &&
                         <form className={styles.signupLoginForm} id={styles.loginForm}>    
                         <img onClick={submitFaucetClick} className={styles.submitFaucet} src={faucet}/>                       
                         {
@@ -115,19 +142,25 @@ style={{ border: 'none', opacity: PASSWORD_SHOW_CLICK ? "1.0" : PASSWORD_SHOW ? 
                             <Captcha/>
                             : 
                             <>
-                        <LoginInput inputType={'emailOrUsername'}/>                      
+                        <LoginInput inputType={'email'}/>                      
                         <LoginInput inputType={'password'}/>
+
+                        <img
+                        onClick={loginShowPassIconClick}
+style={{ border: 'none', opacity: PASSWORD_SHOW_CLICK ? "1.0" : PASSWORD_SHOW ? "0.5" : "0.1", 
+         display: LOGIN_INPUT_FOCUS === "password" ? "" : "none",
+         height: '25px', width: '25px', alignSelf: 'center', marginTop: '0.25em' }}
+                        src={statistics}
+                        />
+                        { LOGIN_MSG && <pre id={styles.loginMsgText}> {LOGIN_MSG} </pre> }
                             </>
                         }                     
-                        <pre id={styles.loginMsgText}> {LOGIN_MSG} </pre>
                             {/* <pre> forgot password? possible empty cup lol </pre> */}
                         </form>
-                        :
-                        <pre></pre>
                     }
         </>
                 )
     }
     
-    return <Container> {RENDER()} </Container>
+    return <> {RENDER()} </>
 }
