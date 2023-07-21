@@ -399,7 +399,11 @@ export const resolvers = {
             email: email,
             age: age
           }
-        }).then( (u) => {
+        }).then(async(u) => {
+            await redis.del("users")
+            let allUsers = await allusersDB()
+            let userStrForRedis = SERIALIZESTRING(allUsers)
+            redis.set("users", userStrForRedis)
             return { id: u.id, googleId: '', icon: '', username: u.username, password: u.password, email: u.email, age: u.age }
         })
       },
