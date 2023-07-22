@@ -28,6 +28,8 @@ const reWriteRedisSettings = async () => {
     await redis.set("settings", settingsStrForRedis)
 }
 
+const deleteSettingsWithId = async (id:number) => { await prisma.settings.delete({ where: { id: id } }) }
+
 const userRedisCheck = async () => {  // thinking about making this a func with param
     return redis.get("users", (error, users) => {
       if (error) {
@@ -302,19 +304,14 @@ export const resolvers = {
         let mySettings = allSettings.filter(settings => settings.users_id === users_id)
         
         mySettings = mySettings[0]        
-        if (mySettings) {
-          await prisma.settings.delete({
-            where: {
-              id: mySettings.id
-            },
-          })
-        }
-        let allSettingsLength:number = allSettings.length + 1
+        if (mySettings) { await deleteSettingsWithId(mySettings.id) } // await prisma.settings.delete({ where: { id: mySettings.id } })
+        
+        let allSettingsForLength = await allsettingsDB()
+        let allSettingsLength = allSettingsForLength.length + 1
         // this works. the above code hasn't been checked yet.
         return await prisma.settings.create({
           data: {
             id: allSettingsLength,
-            // id,
             age,
             height,
             weight,
@@ -325,11 +322,7 @@ export const resolvers = {
             users_id
           }
         }).then(async(addedSettings:SettingsInterface) => {
-          await reWriteRedisSettings()
-          // await redis.del("settings")
-          // const allSettings = await allsettingsDB()
-          // const settingsStrForRedis = SERIALIZESTRING(allSettings)
-          // await redis.set("settings", settingsStrForRedis)
+await reWriteRedisSettings() //await redis.del("settings") //const allSettings = await allsettingsDB() //const settingsStrForRedis = SERIALIZESTRING(allSettings) //await redis.set("settings", settingsStrForRedis)
           return addedSettings
         })
     },
