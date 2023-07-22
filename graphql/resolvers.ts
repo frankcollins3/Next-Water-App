@@ -6,6 +6,7 @@ import puppeteer from "puppeteer"
 import passport from "../utility/passport"; 
 import jwt from "jsonwebtoken"
 import Redis from 'ioredis'
+import { SettingsInterface } from "utility/interfaceNtypes"
 
 const redis = new Redis({
   port: 6379,
@@ -287,10 +288,12 @@ export const resolvers = {
     },
     Mutation: {
     addUserSettings: async (parent, args) => {
-        const { id, age, height, weight, start_time, end_time, reminder, activity, users_id } = args;
+        const { age, height, weight, start_time, end_time, reminder, activity, users_id } = args;
+        // const { id, age, height, weight, start_time, end_time, reminder, activity, users_id } = args;
         // check if there are already settings that correspond to user ID
         let meAsUser = await prisma.users.findUnique({ where: { id: users_id }})
-        let allSettings = await prisma.settings.findMany()
+        let allSettings = await allsettingsDB()
+        let allSettingsLength:number = allSettings.length + 1
         let mySettings = allSettings.filter(settings => settings.users_id === users_id)
 
         mySettings = mySettings[0]        
@@ -302,9 +305,10 @@ export const resolvers = {
           })
         }
         // this works. the above code hasn't been checked yet.
-        const newSettings = await prisma.settings.create({
+        return await prisma.settings.create({
           data: {
-            id,
+            id: allSettingsLength,
+            // id,
             age,
             height,
             weight,
@@ -314,9 +318,13 @@ export const resolvers = {
             activity,
             users_id
           }
-        });  
-        if (!newSettings) return
-        return newSettings;
+        }).then(async(addedSettings:SettingsInterface) => {
+          await redis.del("settings")
+          const allSettings = await allsettingsDB()
+          const settingsStrForRedis = SERIALIZESTRING(allSettings)
+          await redis.set("settings", settingsStrForRedis)
+          return addedSettings
+        })
     },
     addUser: async (parent, args) => {
       const allusers = await allusersDB()
