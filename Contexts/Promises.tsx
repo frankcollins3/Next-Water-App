@@ -1,16 +1,20 @@
 import React, { createContext, useContext, ReactNode, useState } from "react";
+import { userSettingsQueryString } from "graphql/queries";
+import axios from "axios"
 
 
 type PromiseTypes = {
     tokenID: number
 
     iPROMISEcookies: () => any;
+    getUserSettingsPROMISE: () => any;
 }
 
 const PromiseDefaults = {
     tokenID: 1,
 
-    iPROMISEcookies: () => {}
+    iPROMISEcookies: () => {},
+    getUserSettingsPROMISE: () => {}
 }
 
 const PromiseContext = createContext<PromiseTypes>(PromiseDefaults)
@@ -39,9 +43,26 @@ export function PromiseProvider({children}:Props) {
         })
     }
 
+    function getUserSettingsPROMISE () {
+        return iPROMISEcookies()
+        .then(async(cookieID) => {
+            const ID = parseInt(cookieID)
+            const userSettingsQueryStr = await userSettingsQueryString(ID)
+            let mySettings = await axios.post('/api/graphql', { query: `${userSettingsQueryStr}` } )
+            return mySettings
+        })        
+        // return (async() => {            
+
+        //     const userSettingsQueryStr = await userSettingsQueryString()
+        //     let mySettings = await axios.post('/api/graphql', { query: `${userSettingsQueryStr}` } )
+        //     return mySettings
+        // })()
+    }
+
         const value = {
             tokenID,
-            iPROMISEcookies
+            iPROMISEcookies,
+            getUserSettingsPROMISE
         }        
 
         // let cookieID = cookieIdString.replace(RreturnNumbers, '') // replace doesn't exist on string or object
