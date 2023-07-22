@@ -21,6 +21,13 @@ const alldataDB = prisma.data.findMany
 const allusersDB = prisma.users.findMany
 const allsettingsDB = prisma.settings.findMany
 
+const reWriteRedisSettings = async () => {
+  await redis.del("settings")
+    const allSettings = await allsettingsDB()
+    const settingsStrForRedis = SERIALIZESTRING(allSettings)
+    await redis.set("settings", settingsStrForRedis)
+}
+
 const userRedisCheck = async () => {  // thinking about making this a func with param
     return redis.get("users", (error, users) => {
       if (error) {
@@ -291,19 +298,18 @@ export const resolvers = {
         const { age, height, weight, start_time, end_time, reminder, activity, users_id } = args;
         // const { id, age, height, weight, start_time, end_time, reminder, activity, users_id } = args;
         // check if there are already settings that correspond to user ID
-        let meAsUser = await prisma.users.findUnique({ where: { id: users_id }})
         let allSettings = await allsettingsDB()
-        let allSettingsLength:number = allSettings.length + 1
         let mySettings = allSettings.filter(settings => settings.users_id === users_id)
-
+        
         mySettings = mySettings[0]        
         if (mySettings) {
-          const deleteUser = await prisma.settings.delete({
+          await prisma.settings.delete({
             where: {
               id: mySettings.id
             },
           })
         }
+        let allSettingsLength:number = allSettings.length + 1
         // this works. the above code hasn't been checked yet.
         return await prisma.settings.create({
           data: {
@@ -319,13 +325,37 @@ export const resolvers = {
             users_id
           }
         }).then(async(addedSettings:SettingsInterface) => {
-          await redis.del("settings")
-          const allSettings = await allsettingsDB()
-          const settingsStrForRedis = SERIALIZESTRING(allSettings)
-          await redis.set("settings", settingsStrForRedis)
+          await reWriteRedisSettings()
+          // await redis.del("settings")
+          // const allSettings = await allsettingsDB()
+          // const settingsStrForRedis = SERIALIZESTRING(allSettings)
+          // await redis.set("settings", settingsStrForRedis)
           return addedSettings
         })
     },
+    deleteUserSettings: async (parent, args) => {
+      const { users_id } = args;
+      let allSettings = await allsettingsDB()
+      let mySettings = allSettings.find(settings => settings.users_id === users_id)
+      if (mySettings) {
+        prisma.settings
+          .delete({
+            where: {
+              id: mySettings.id,
+            },
+          })
+          .then(async() => {
+            await redis.del("settings")
+            
+          })
+          .catch((error) => {
+            console.error("Error deleting settings:", error);
+          });
+      } else {
+        console.log("Settings not found for the specified users_id.");
+      }
+    },
+
     addUser: async (parent, args) => {
       const allusers = await allusersDB()
       let userlength = allusers.length + 1
