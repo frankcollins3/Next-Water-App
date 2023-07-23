@@ -10,10 +10,10 @@ import Schedule from "components/elements/Schedule/Schedule";
 // @redux/toolkit global state management
 import {RootState} from "redux/store/rootReducer"
 import {useSelector, useDispatch} from "react-redux"
-import { SET_HYDRO_SCHEDULE, SET_HYDRO_DATA, SET_DATE, SET_HYDRO_INTAKE } from "redux/main/mainSlice"
+import { SET_HYDRO_SCHEDULE, SET_HYDRO_DATA, SET_DATE, SET_HYDRO_INTAKE, SET_STATUS } from "redux/main/mainSlice"
 
 // utils
-import { SettingsInterface } from "utility/interfaceNtypes";
+import { SettingsInterface, HydroDataInterface } from "utility/interfaceNtypes";
 import { userSettingsQueryString, getUserDailyDataQueryString } from "graphql/queries";
 import waterIntakeWeightFormula from "utility/waterIntakeWeightFormula";
 
@@ -26,7 +26,8 @@ type PromiseTypes = {
     userSettingsSchedulePROMISE: () => any;
     userSettingsIntakePROMISE: () => any;
     getDailyDataPROMISE: () => any;
-}
+    setDataStatePROMISE: (date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean) => any;
+}   
 
 const PromiseDefaults = {
     tokenID: 1,
@@ -35,7 +36,8 @@ const PromiseDefaults = {
     getUserSettingsPROMISE: () => {},
     userSettingsSchedulePROMISE: () => {},
     userSettingsIntakePROMISE: () => {},
-    getDailyDataPROMISE: () => {}
+    getDailyDataPROMISE: () => {},
+    setDataStatePROMISE: (date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean) => {},
 }
 
 const PromiseContext = createContext<PromiseTypes>(PromiseDefaults)
@@ -47,6 +49,12 @@ export function usePromise() {
 type Props = { children: ReactNode }
 
 export function PromiseProvider({children}:Props) {
+    const HYDRO_DATA = useSelector( (state:RootState) => state.main.HYDRO_DATA)
+    const HYDRO_SCHEDULE = useSelector( (state:RootState) => state.main.HYDRO_SCHEDULE)
+    const HYDRO_INTAKE = useSelector( (state:RootState) => state.main.HYDRO_INTAKE)
+    const DATE = useSelector( (state:RootState) => state.main.DATE)
+    const STATUS = useSelector( (state:RootState) => state.main.STATUS)
+
     const dispatch = useDispatch()
 
     const [tokenID, setTokenID] = useState<number>(0)
@@ -119,6 +127,7 @@ export function PromiseProvider({children}:Props) {
     }
 // * * *  END OF SETTINGS PROMISES * * * 
 
+    // DATA PROMISES
     async function getDailyDataPROMISE() {
         try {
           return iPROMISEcookies()
@@ -130,18 +139,43 @@ export function PromiseProvider({children}:Props) {
             if (myDailyData.data.data.getDailyData) {
                 let dailyData = myDailyData.data.data.getDailyData
                 console.log('date', dailyData)
-                await dispatch(SET_DATE(dailyData.date))
-                await dispatch(SET_HYDRO_DATA(dailyData))
+                // await dispatch(SET_DATE(dailyData.date))
+                // await dispatch(SET_HYDRO_DATA(dailyData))
             }
             return myDailyData
-
         })
-
         }   
-        catch {
-
-        }
+        catch (err) { return err }
     }
+
+    async function setDataStatePROMISE(date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean):Promise<PromiseTypes> {        
+        return getDailyDataPROMISE()
+        .then(async(dailyData:any) => { 
+            return new Promise(async(resolve:any, reject:any) => {
+                console.log('dailyData from the promise', dailyData)                        
+                if (date) dispatch(SET_DATE(dailyData.date))
+            if (hydro_data) dispatch(SET_HYDRO_DATA(dailyData))
+            if (status) dispatch(SET_STATUS(dailyData.status))
+            if (hydro_intake) {
+                const waterintake:any = await userSettingsIntakePROMISE()
+                console.log('waterintake', waterintake)
+                dispatch(SET_HYDRO_INTAKE(waterintake))
+            }
+            if (hydro_schedule) {
+                const userDailyWaterSchedule = await userSettingsSchedulePROMISE()
+                console.log('schedule in promise', userDailyWaterSchedule)
+            }           
+            resolve([{hydro_data: `${HYDRO_DATA}`, hydro_schedule: `${HYDRO_SCHEDULE}`, hydro_intake: `${HYDRO_INTAKE}`, date: `${DATE}`, status: `${STATUS}`}])            
+            reject("error")
+        })
+    })
+    }
+
+    // DATA PROMISES
+
+    // SET_DATE, SET_HYDRO_DATA, SET_HYDRO_SCHEDULE, SET_STATUS, 
+
+
 
         const value = {
             tokenID,
@@ -149,7 +183,8 @@ export function PromiseProvider({children}:Props) {
             getUserSettingsPROMISE,
             userSettingsSchedulePROMISE,
             userSettingsIntakePROMISE,
-            getDailyDataPROMISE
+            getDailyDataPROMISE,
+            setDataStatePROMISE
         }        
 
         // let cookieID = cookieIdString.replace(RreturnNumbers, '') // replace doesn't exist on string or object
