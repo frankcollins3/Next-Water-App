@@ -10,7 +10,7 @@ import Schedule from "components/elements/Schedule/Schedule";
 // @redux/toolkit global state management
 import {RootState} from "redux/store/rootReducer"
 import {useSelector, useDispatch} from "react-redux"
-import { SET_HYDRO_SCHEDULE, SET_HYDRO_DATA, SET_DATE, SET_HYDRO_INTAKE, SET_STATUS } from "redux/main/mainSlice"
+import { SET_HYDRO_SCHEDULE, SET_HYDRO_DATA, SET_DATE, SET_HYDRO_INTAKE, SET_STATUS, SET_DISABLED } from "redux/main/mainSlice"
 
 // utils
 import { SettingsInterface, HydroDataInterface } from "utility/interfaceNtypes";
@@ -26,7 +26,7 @@ type PromiseTypes = {
     userSettingsSchedulePROMISE: () => any;
     userSettingsIntakePROMISE: () => any;
     getDailyDataPROMISE: () => any;
-    setDataStatePROMISE: (date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean) => any;
+    setDataStatePROMISE: (date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean, disabled:boolean) => any;
 }   
 
 const PromiseDefaults = {
@@ -37,7 +37,7 @@ const PromiseDefaults = {
     userSettingsSchedulePROMISE: () => {},
     userSettingsIntakePROMISE: () => {},
     getDailyDataPROMISE: () => {},
-    setDataStatePROMISE: (date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean) => {},
+    setDataStatePROMISE: (date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean, disabled:boolean) => {},
 }
 
 const PromiseContext = createContext<PromiseTypes>(PromiseDefaults)
@@ -54,6 +54,7 @@ export function PromiseProvider({children}:Props) {
     const HYDRO_INTAKE = useSelector( (state:RootState) => state.main.HYDRO_INTAKE)
     const DATE = useSelector( (state:RootState) => state.main.DATE)
     const STATUS = useSelector( (state:RootState) => state.main.STATUS)
+    const DISABLED = useSelector( (state:RootState) => state.main.DISABLED)
 
     const dispatch = useDispatch()
 
@@ -148,11 +149,12 @@ export function PromiseProvider({children}:Props) {
         catch (err) { return err }
     }
 
-    async function setDataStatePROMISE(date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean):Promise<PromiseTypes> {        
+    async function setDataStatePROMISE(date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean, disabled:boolean):Promise<PromiseTypes> {        
         return getDailyDataPROMISE()
         .then(async(dailyData:any) => { 
             return new Promise(async(resolve:any, reject:any) => {
-                console.log('dailyData from the promise', dailyData)                        
+                console.log('dailyData from the promise', dailyData)      
+                dailyData = dailyData.data.data.getDailyData                  
                 if (date) dispatch(SET_DATE(dailyData.date))
             if (hydro_data) dispatch(SET_HYDRO_DATA(dailyData))
             if (status) dispatch(SET_STATUS(dailyData.status))
@@ -163,9 +165,16 @@ export function PromiseProvider({children}:Props) {
             }
             if (hydro_schedule) {
                 const userDailyWaterSchedule = await userSettingsSchedulePROMISE()
+                let scheduleLength:number = userDailyWaterSchedule.length;                
+                dispatch(SET_HYDRO_SCHEDULE(userDailyWaterSchedule))
+
+                if (disabled) {
+                    dispatch(SET_DISABLED(Array(scheduleLength).fill(false)))
+                }
+
                 console.log('schedule in promise', userDailyWaterSchedule)
             }           
-            resolve([{hydro_data: `${HYDRO_DATA}`, hydro_schedule: `${HYDRO_SCHEDULE}`, hydro_intake: `${HYDRO_INTAKE}`, date: `${DATE}`, status: `${STATUS}`}])            
+            resolve([{hydro_data: `${HYDRO_DATA}`, hydro_schedule: `${HYDRO_SCHEDULE}`, hydro_intake: `${HYDRO_INTAKE}`, date: `${DATE}`, status: `${STATUS}`, disabled: `${DISABLED}`}])            
             reject("error")
         })
     })
