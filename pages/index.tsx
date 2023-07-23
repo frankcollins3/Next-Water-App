@@ -44,7 +44,7 @@ function RenderMain() {
   // HYDRO_SETTINGS: false, HYDRO_SCHEDULE: [], HYDRO_INTAKE: 0, STATUS: [], DISABLED: [],
 
   // const HYDRO_SETTINGS = props.HYDRO_SETTINGS
-  const { iPROMISEcookies, getUserSettingsPROMISE, userSettingsSchedulePROMISE, getDailyDataPROMISE } = usePromise()
+  const { iPROMISEcookies, getUserSettingsPROMISE, userSettingsSchedulePROMISE, getDailyDataPROMISE, userSettingsIntakePROMISE } = usePromise()
 
 
   useEffect(() => { 
@@ -57,25 +57,10 @@ function RenderMain() {
         const allUsers = allDBusers.data.data.allDBusers
         const meUser = allUsers.find(user => user.id === IDcookieINT)
 
+        let promisebank:any[] = [userSettingsSchedulePROMISE(), getDailyDataPROMISE(), userSettingsIntakePROMISE()]
+        Promise.all(promisebank)
 
-
-        // Promise.all() no?
-        userSettingsSchedulePROMISE()      
-        getDailyDataPROMISE()       
-        getUserSettingsPROMISE()
-        .then(async(mySettings:any) => {
-          mySettings = mySettings.data.data.userSettings
-          console.log('settings client', mySettings)
-          let weight:number = mySettings.weight
-          console.log('weight', weight)
-          let intake:number = await waterIntakeWeightFormula(weight)
-          console.log('intake', intake)
-          dispatch(SET_HYDRO_INTAKE(intake))
-          console.log('intake', intake)
-          console.log('type intake', typeof intake)
-        })  
-        
-        
+              
       }
     })
 
