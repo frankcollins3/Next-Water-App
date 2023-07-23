@@ -1,15 +1,21 @@
 import React, { createContext, useContext, ReactNode, useState } from "react";
-import { userSettingsQueryString } from "graphql/queries";
 import axios from "axios"
-import { SettingsInterface } from "utility/interfaceNtypes";
+
+
 import Settings from "components/elements/Settings";
 import Schedule from "components/elements/Schedule/Schedule";
+
+
 
 // @redux/toolkit global state management
 import {RootState} from "redux/store/rootReducer"
 import {useSelector, useDispatch} from "react-redux"
+import { SET_HYDRO_SCHEDULE, SET_HYDRO_DATA, SET_DATE, SET_HYDRO_INTAKE } from "redux/main/mainSlice"
 
-import { SET_HYDRO_SCHEDULE } from "redux/main/mainSlice"
+// utils
+import { SettingsInterface } from "utility/interfaceNtypes";
+import { userSettingsQueryString, getUserDailyDataQueryString } from "graphql/queries";
+import waterIntakeWeightFormula from "utility/waterIntakeWeightFormula";
 
 
 type PromiseTypes = {
@@ -18,6 +24,8 @@ type PromiseTypes = {
     iPROMISEcookies: () => any;
     getUserSettingsPROMISE: () => any;
     userSettingsSchedulePROMISE: () => any;
+    userSettingsIntakePROMISE: () => any;
+    getDailyDataPROMISE: () => any;
 }
 
 const PromiseDefaults = {
@@ -25,7 +33,9 @@ const PromiseDefaults = {
 
     iPROMISEcookies: () => {},
     getUserSettingsPROMISE: () => {},
-    userSettingsSchedulePROMISE: () => {}
+    userSettingsSchedulePROMISE: () => {},
+    userSettingsIntakePROMISE: () => {},
+    getDailyDataPROMISE: () => {}
 }
 
 const PromiseContext = createContext<PromiseTypes>(PromiseDefaults)
@@ -63,7 +73,6 @@ export function PromiseProvider({children}:Props) {
             const ID = parseInt(cookieID)
             const userSettingsQueryStr = await userSettingsQueryString(ID)
             let mySettings = await axios.post('/api/graphql', { query: `${userSettingsQueryStr}` } )
-
             return mySettings
         })        
     }
@@ -89,15 +98,58 @@ export function PromiseProvider({children}:Props) {
       })
     }
     }
-    catch { return "aaye catch" }
+    catch(err:any) { return err }    
+    // catch(err) { throw new Error(err) }    
 }
 
+    async function userSettingsIntakePROMISE() {
+        return new Promise( (resolve:any, reject:any) => {
+            getUserSettingsPROMISE()
+            .then(async(mySettings:any) => {
+                mySettings = mySettings.data.data.userSettings
+                let weight:number = mySettings.weight
+                const intake:number = await waterIntakeWeightFormula(weight)
+                if (intake > 1) {
+                    dispatch(SET_HYDRO_INTAKE(intake))
+                    resolve(intake)
+                }
+                reject('cant take in')
+            })
+        })
+    }
+// * * *  END OF SETTINGS PROMISES * * * 
+
+    async function getDailyDataPROMISE() {
+        try {
+          return iPROMISEcookies()
+          .then(async(cookieID) => {
+            const ID = parseInt(cookieID)
+            const userDailyDataQueryStr = await getUserDailyDataQueryString(ID)
+            let myDailyData = await axios.post('/api/graphql', { query: `${userDailyDataQueryStr}`})
+            console.log(myDailyData)
+            if (myDailyData.data.data.getDailyData) {
+                let dailyData = myDailyData.data.data.getDailyData
+                console.log('date', dailyData)
+                await dispatch(SET_DATE(dailyData.date))
+                await dispatch(SET_HYDRO_DATA(dailyData))
+            }
+            return myDailyData
+
+        })
+
+        }   
+        catch {
+
+        }
+    }
 
         const value = {
             tokenID,
             iPROMISEcookies,
             getUserSettingsPROMISE,
-            userSettingsSchedulePROMISE
+            userSettingsSchedulePROMISE,
+            userSettingsIntakePROMISE,
+            getDailyDataPROMISE
         }        
 
         // let cookieID = cookieIdString.replace(RreturnNumbers, '') // replace doesn't exist on string or object
