@@ -6,7 +6,7 @@ import puppeteer from "puppeteer"
 import passport from "../utility/passport"; 
 import jwt from "jsonwebtoken"
 import Redis from 'ioredis'
-import { SettingsInterface } from "utility/interfaceNtypes"
+import { SettingsInterface, HydroDataInterface } from "utility/interfaceNtypes"
 
 const redis = new Redis({
   port: 6379,
@@ -27,6 +27,20 @@ const reWriteRedisSettings = async () => {
     const settingsStrForRedis = SERIALIZESTRING(allSettings)
     await redis.set("settings", settingsStrForRedis)
 }
+
+const reWriteRedisUserSettings = async (users_id:number, usersSettings:SettingsInterface) => {
+  await redis.del(`userSettings:${users_id}`)
+    const userSettingsStrForRedis = SERIALIZESTRING(usersSettings)
+    await redis.set(`userSettings:${users_id}`, userSettingsStrForRedis)
+}
+
+const reWriteRedisUserData = async (users_id:number, usersData:HydroDataInterface) => {
+  await redis.del(`userData:${users_id}`)
+  const userDataStrForRedis = SERIALIZESTRING(usersData)
+  await redis.set(`userData:${users_id}`, userDataStrForRedis)
+}
+
+
 
 const deleteSettingsWithId = async (id:number) => { await prisma.settings.delete({ where: { id: id } }) }
 
@@ -60,9 +74,9 @@ const dataRedisCheck = async () => {  // thinking about making this a func with 
   });
 }
 
-const userSettingsRedisCheck = async (id) => {  // thinking about making this a func with param
-          // string interpolation so that the cache data saved to redis corresponds to userId as well, concatenated with "userSettings" string that corresponds to this resolver function
-      return redis.get(`userSettings:${id}`, (error, users) => {
+const userSettingsRedisCheck = async (users_id) => {  // thinking about making this a func with param
+          // string interpolation so that the cache data saved to redis corresponds to userusers_id as well, concatenated with "userSettings" string that corresponds to this resolver function
+      return redis.get(`userSettings:${users_id}`, (error, users) => {
         if (error) {
           return error
         } else {      
@@ -71,8 +85,8 @@ const userSettingsRedisCheck = async (id) => {  // thinking about making this a 
   });
 }
 
-const userDataRedisCheck = async (id) => {
-      return redis.get(`userData:${id}`, (error, users) => {
+const userDataRedisCheck = async (users_id) => {
+      return redis.get(`userData:${users_id}`, (error, users) => {
         if (error) {
           return error
         } else {
@@ -156,16 +170,16 @@ export const resolvers = {
 // age, height, etc. userSettings that determine water schedule. reminder is the notification intensity. 8am - 8pm is 8 - 16. notification intensity of 2 means every 2 hours get notified.
     userSettings: async (parent, args) => {
       // id that corresponds to postgres.table.user.id
-        let { id } = args        
+        let { users_id } = args        
   // function that returns redis.get() return data (redis.get() is a promise which is why using an additional {new Promise} constructor is redundant and technically not DRY code.)
         // evaluate the above function that returns the cache data or not.
-        let userSettingsRedis = await userSettingsRedisCheck(id)
+        let userSettingsRedis = await userSettingsRedisCheck(users_id)
         // if cache data comes back good, the if block handles that:      we dont want to query the database, we want to query the cache and spare the user the latency of waiting for data
         if (userSettingsRedis) {
           // JSON.parse(userSettingsRedis) this is done because redis only accepts a string. Return this cache data below.
           const allUserSettingsObject = PARSESERIALIZEDSTRING(userSettingsRedis)
           console.log("userSettings redis block", userSettingsRedis)
-          return userSettingsRedis
+          return allUserSettingsObject
         } else {
           // else block means there is no cache data & prisma must retrieve data from postgresDB to return to client.
           console.log("NO redis. userSettings ELSE block!!!")
@@ -173,13 +187,12 @@ export const resolvers = {
           let allsettings = await prisma.settings.findMany()            
           let settingsLength = allsettings.length + 1
           let allusers = await prisma.users.findMany()
-          let me = allusers.filter(us => us.id === id)
+          let me = allusers.filter(us => us.id === users_id)
           let myage = me[0].age
-          let mySettings = allsettings.filter(settings => settings.users_id === id)
+          let mySettings = allsettings.filter(settings => settings.users_id === users_id)
           mySettings = mySettings[0]
 // before we return the graphQL data, set:    JSON.stringify(mySettings)        into the cache so that the next query can return cache from userSettingsRedisCache() / redis.get(`userSettings${id}`)
-          let mySettingsForRedis = SERIALIZESTRING(mySettings)
-          await redis.set(`userSettings:${id}`, mySettingsForRedis)
+          await reWriteRedisUserSettings(me[0].id, mySettings)
           return mySettings
         }
         // return { id, weight, height, age, reminder, start_time, end_time, reminder, activity, users_id } = settings 
@@ -322,7 +335,8 @@ export const resolvers = {
             users_id
           }
         }).then(async(addedSettings:SettingsInterface) => {
-await reWriteRedisSettings() //await redis.del("settings") //const allSettings = await allsettingsDB() //const settingsStrForRedis = SERIALIZESTRING(allSettings) //await redis.set("settings", settingsStrForRedis)
+// await reWriteRedisSettings() //await redis.del("settings") //const allSettings = await allsettingsDB() //const settingsStrForRedis = SERIALIZESTRING(allSettings) //await redis.set("settings", settingsStrForRedis)
+          reWriteRedisUserSettings(users_id, addedSettings)
           return addedSettings
         })
     },
@@ -366,46 +380,67 @@ await reWriteRedisSettings() //await redis.del("settings") //const allSettings =
     },
     getDailyData: async (parent, args) => {
           const { users_id } = args
-          const allusers = await allusersDB()
-          const alldata = await alldataDB()
-          const dataLength = alldata.length
-          let me = allusers.filter(users => users.id === users_id)
-          const date = new Date()
-          const dayName = date.toLocaleDateString('en-US', { weekday: 'long' } )
-          const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`        
-          const dateAndUserCheck = alldata.find(data => data.date === dateString && data.users_id === users_id)
-          if (dateAndUserCheck) {
-            // Data already exists for the given date and user
-            return dateAndUserCheck;
-          }
+
+      //     const userDataRedisCheck = async (users_id) => {
+      //       return redis.get(`userData:${users_id}`, (error, users) => {
+      //         if (error) {
+      //           return error
+      //         } else {
+      //           return 
+      //         }
+      //       })
+      // }
+      let userDataRedis = await userDataRedisCheck(users_id)
+      if (userDataRedis) { 
+        console.log("getDailyData redis block!! ! !!  !")
+        return PARSESERIALIZEDSTRING(userDataRedis)
+      } else {
+        console.log("no redis so were over here!")
+        const allusers = await allusersDB()
+        const alldata = await alldataDB()
+        const dataLength = alldata.length
+        let me = allusers.filter(users => users.id === users_id)
+        const date = new Date()
+        const dayName = date.toLocaleDateString('en-US', { weekday: 'long' } )
+        const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`        
+        const dateAndUserCheck = alldata.find(data => data.date === dateString && data.users_id === users_id)
+        if (dateAndUserCheck) {
+          // Data already exists for the given date and user
+          return dateAndUserCheck;
+        }
   
-          if (!me) return
-          return prisma.data.create({
-            data: {
-              id: dataLength + 1,
-              google_id: me.google_id || 'no google-id',
-              date: dateString,
-              progress: 0,
-              weekday: dayName,
-              status: [],
-              users_id: users_id
-            }
-          }).then( (newdate) => {
-            let d = newdate;
-            return { id: d.id, google_id: d.google_id, date: d.date, progress: d.progress, weekday: d.weekday, status: d.status, users_id: d.users_id }
-          })
-      },
+        if (!me) return
+        return prisma.data.create({
+          data: {
+            id: dataLength + 1,
+            google_id: me.google_id || 'no google-id',
+            date: dateString,
+            progress: 0,
+            weekday: dayName,
+            status: [],
+            users_id: users_id
+          }
+        }).then(async(newdata) => {
+          let d = newdata;
+          await redis.del(`userData:${users_id}`)
+          const userDataStrForRedis = SERIALIZESTRING(d)
+          await redis.set(`userData:${users_id}`, userDataStrForRedis)            
+          return { id: d.id, google_id: d.google_id, date: d.date, progress: d.progress, weekday: d.weekday, status: d.status, users_id: d.users_id }
+        })
+      }
+    },      
     updateDailyData: async (parent, args) => {      
-      const { users_id, progress, status, date } = args;
+      const { users_id, progress, status, date } = args;      
       const allusers = await allusersDB();
       const alldata = await alldataDB()
       const today = new Date().getDate()
       const mydata = alldata.find(data => data.users_id === users_id && data.date === date)
       return await prisma.data.update({
         where: { id: mydata.id },
-        data: { progress: progress >= 93 ? 100 : progress, status: status },
+        data: { progress: progress >= 96 ? 100 : progress, status: status },
       }).then(updatedData => {
         const d = updatedData;
+        reWriteRedisUserData(users_id, d)
         return { google_id: d.google_id, date: date, progress: d.progress, weekday: d.weekday, status: d.status, users_id: d.users_id };          
       }).catch( (err) => { return "err" } )
     },
