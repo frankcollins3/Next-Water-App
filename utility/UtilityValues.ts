@@ -1,5 +1,4 @@
 import $ from 'jquery'
-import CSS from './CSS'
 import bcrypt from "bcryptjs"
 import crypto from "crypto"
 
@@ -67,6 +66,27 @@ export function SERIALIZESTRING (obj:any) { return JSON.stringify(obj) }
 export function PARSESERIALIZEDSTRING (str:string) { return JSON.parse(str) }
 
 export const JWTsecretKeyMaker = () => { return crypto.randomBytes(64).toString('hex') }
+
+export function attributeJQ(obj:any, attr:string, value:string ) { $(obj).attr(attr, value) }
+export function CSS(selector:any, property:string, value:string) { $(selector).css(property, value) }
+
+const backupArrayForIcons:string[] = 
+[
+"/water_img/squid.png", "/water_img/bottles.png", "/water_img/hand.png", 
+"/water_img/faucet.png", "/water_img/pool.png", "/water_img/panda.png", "/water_img/dolphin.png" 
+]
+
+export function randomIcon () { return  backupArrayForIcons[Math.floor(Math.random() * backupArrayForIcons.length) ] }
+
+export function getDayOfWeek (newDateGetDayInt:number) {
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const today = new Date()
+        const dayOfWeekIndex = today.getDay()
+        const dayOfWeek = daysOfWeek[dayOfWeekIndex]
+        return dayOfWeek
+}
+
+
 
 // prisma utilities: (sent without invocation)
 
