@@ -1,43 +1,44 @@
 import React, { createContext, useContext, ReactNode, useState } from "react";
 import axios from "axios"
 
-
 import Settings from "components/elements/Settings";
 import Schedule from "components/elements/Schedule/Schedule";
-
-
 
 // @redux/toolkit global state management
 import {RootState} from "redux/store/rootReducer"
 import {useSelector, useDispatch} from "react-redux"
-import { SET_HYDRO_SCHEDULE, SET_HYDRO_DATA, SET_DATE, SET_HYDRO_INTAKE, SET_STATUS, SET_DISABLED } from "redux/main/mainSlice"
+import { SET_HYDRO_SCHEDULE, SET_HYDRO_DATA, SET_DATE, SET_HYDRO_INTAKE, SET_STATUS, SET_DISABLED, SET_PROGRESS  } from "redux/main/mainSlice"
+import { SET_CURRENT_USER  } from "redux/logInOutGoogle/logInOutGoogleSlice"
 
 // utils
-import { SettingsInterface, HydroDataInterface } from "utility/interfaceNtypes";
-import { userSettingsQueryString, getUserDailyDataQueryString } from "graphql/queries";
+import { SettingsInterface, HydroDataInterface, UsersLoginInterface } from "utility/interfaceNtypes";
+import { allDBusersquery, userSettingsQueryString, getUserDailyDataQueryString } from "graphql/queries";
 import waterIntakeWeightFormula from "utility/waterIntakeWeightFormula";
+
 
 
 type PromiseTypes = {
     tokenID: number
 
     iPROMISEcookies: () => any;
+    getAndSetCurrentUserPROMISE: () => any;
+
     getUserSettingsPROMISE: () => any;
     userSettingsSchedulePROMISE: () => any;
     userSettingsIntakePROMISE: () => any;
     getDailyDataPROMISE: () => any;
-    setDataStatePROMISE: (date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean, disabled:boolean) => any;
+    setDataStatePROMISE: (date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean, disabled:boolean, progress:boolean) => any;
 }   
 
 const PromiseDefaults = {
     tokenID: 1,
-
     iPROMISEcookies: () => {},
+    getAndSetCurrentUserPROMISE: () => {},
     getUserSettingsPROMISE: () => {},
     userSettingsSchedulePROMISE: () => {},
     userSettingsIntakePROMISE: () => {},
     getDailyDataPROMISE: () => {},
-    setDataStatePROMISE: (date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean, disabled:boolean) => {},
+    setDataStatePROMISE: (date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean, disabled:boolean, progress:boolean) => {},
 }
 
 const PromiseContext = createContext<PromiseTypes>(PromiseDefaults)
@@ -55,16 +56,20 @@ export function PromiseProvider({children}:Props) {
     const DATE = useSelector( (state:RootState) => state.main.DATE)
     const STATUS = useSelector( (state:RootState) => state.main.STATUS)
     const DISABLED = useSelector( (state:RootState) => state.main.DISABLED)
+    const PROGRESS = useSelector( (state:RootState) => state.main.PROGRESS)
 
     const dispatch = useDispatch()
 
     const [tokenID, setTokenID] = useState<number>(0)
 
-    function iPROMISEcookies () {
+    // main app and user PROMISES
+    function iPROMISEcookies() {
         const getCookiePROMISE = new Promise((cookies:any, milk:any) => {
-            const webcookies = document.cookie.split('; ');
-            cookies(webcookies)
-            milk('spill')
+            if (document.cookie) {
+                const webcookies = document.cookie.split('; ');
+                cookies(webcookies)
+                milk('spill')
+            }
         })
         return getCookiePROMISE
         .then( (c:any) => {
@@ -74,6 +79,38 @@ export function PromiseProvider({children}:Props) {
             // setTokenID(sliceID)
         })
     }
+
+    function getAndSetCurrentUserPROMISE() {
+        return new Promise( (resolve:any, reject:any) => {
+            return iPROMISEcookies()
+            .then(async(cookie:any) => {
+                const INTcookieID:number|undefined = parseInt(cookie)
+                console.log('INT ID', INTcookieID)
+
+                return axios.post('/api/graphql', {
+                    query: `${allDBusersquery}`
+                })
+                .then( (data:any) => {
+                    data = data.data.data.allDBusers
+                    console.log('data before .find', data)
+                    let me:any = data.find(user => user.id === INTcookieID)
+                    dispatch(SET_CURRENT_USER(me))
+                    resolve(me)
+                    reject('nobody')
+                    // let me:UsersLoginInterface|undefined = data.find(user => user.id === INTcookieID)                
+                    // console.log('you are here', me)
+
+                })
+                .catch( (err) => {
+                    console.log('err')
+                    console.log(err)
+                })                                
+            })
+        })
+    }
+    // * * * * * end of  main app and user PROMISES
+
+
 
     // SETTINGS PROMISES! 
     function getUserSettingsPROMISE () {
@@ -149,7 +186,7 @@ export function PromiseProvider({children}:Props) {
         catch (err) { return err }
     }
 
-    async function setDataStatePROMISE(date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean, disabled:boolean):Promise<PromiseTypes> {        
+    async function setDataStatePROMISE(date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean, disabled:boolean, progress:boolean):Promise<PromiseTypes> {        
         return getDailyDataPROMISE()
         .then(async(dailyData:any) => { 
             return new Promise(async(resolve:any, reject:any) => {
@@ -158,6 +195,8 @@ export function PromiseProvider({children}:Props) {
                 if (date) dispatch(SET_DATE(dailyData.date))
             if (hydro_data) dispatch(SET_HYDRO_DATA(dailyData))
             if (status) dispatch(SET_STATUS(dailyData.status))
+            if (progress) dispatch(SET_PROGRESS(dailyData.progress))
+            
             if (hydro_intake) {
                 const waterintake:any = await userSettingsIntakePROMISE()
                 console.log('waterintake', waterintake)
@@ -179,7 +218,6 @@ export function PromiseProvider({children}:Props) {
         })
     })
     }
-
     // DATA PROMISES
 
     // SET_DATE, SET_HYDRO_DATA, SET_HYDRO_SCHEDULE, SET_STATUS, 
@@ -189,6 +227,7 @@ export function PromiseProvider({children}:Props) {
         const value = {
             tokenID,
             iPROMISEcookies,
+            getAndSetCurrentUserPROMISE,            
             getUserSettingsPROMISE,
             userSettingsSchedulePROMISE,
             userSettingsIntakePROMISE,
