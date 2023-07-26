@@ -86,11 +86,11 @@ const userSettingsRedisCheck = async (users_id) => {  // thinking about making t
 }
 
 const userDataRedisCheck = async (users_id) => {
-      return redis.get(`userData:${users_id}`, (error, users) => {
+      return redis.get(`userData:${users_id}`, (error, userData) => {
         if (error) {
           return error
         } else {
-          return 
+          return userData
         }
       })
 }
@@ -381,15 +381,6 @@ export const resolvers = {
     getDailyData: async (parent, args) => {
           const { users_id } = args
 
-      //     const userDataRedisCheck = async (users_id) => {
-      //       return redis.get(`userData:${users_id}`, (error, users) => {
-      //         if (error) {
-      //           return error
-      //         } else {
-      //           return 
-      //         }
-      //       })
-      // }
       let userDataRedis = await userDataRedisCheck(users_id)
       if (userDataRedis) { 
         console.log("getDailyData redis block!! ! !!  !")
@@ -408,7 +399,6 @@ export const resolvers = {
           // Data already exists for the given date and user
           return dateAndUserCheck;
         }
-  
         if (!me) return
         return prisma.data.create({
           data: {
@@ -430,11 +420,13 @@ export const resolvers = {
       }
     },      
     updateDailyData: async (parent, args) => {      
-      const { users_id, progress, status, date } = args;      
+      const { users_id, progress, weekday, status, date } = args;      
+
       const allusers = await allusersDB();
       const alldata = await alldataDB()
       const today = new Date().getDate()
       const mydata = alldata.find(data => data.users_id === users_id && data.date === date)
+      if (mydata.progress > 5) return
       return await prisma.data.update({
         where: { id: mydata.id },
         data: { progress: progress >= 96 ? 100 : progress, status: status },
