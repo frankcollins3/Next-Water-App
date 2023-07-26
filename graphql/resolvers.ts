@@ -421,7 +421,11 @@ export const resolvers = {
     },      
     updateDailyData: async (parent, args) => {      
       const { users_id, progress, weekday, status, date } = args;      
-
+      const userDataRedis = await userDataRedisCheck(users_id)
+      if (userDataRedis) {
+        console.log('in the redis cache for userData')
+        return userDataRedis
+      }
       const allusers = await allusersDB();
       const alldata = await alldataDB()
       const today = new Date().getDate()
