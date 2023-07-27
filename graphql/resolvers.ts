@@ -210,6 +210,11 @@ export const resolvers = {
         console.log("NO redis. allUserData ELSE block!")
         let alldata = await alldataDB()
         const mydata = alldata.filter(waterCycleData => waterCycleData.users_id === users_id)
+
+        // testing
+        console.log('mydata server', mydata)
+
+
         const myDataForRedis = SERIALIZESTRING(mydata)
         await redis.set(`userData:${users_id}`, myDataForRedis)
         return mydata
@@ -462,6 +467,12 @@ export const resolvers = {
             age: age
           }
         }).then(async(u) => {
+          // expected iterable error because of :       allUserData(users_id: Int!): [Data]!  *** MAKING A MADE UP DATE ! ! ! ***
+          let allData = await alldataDB()
+          let allDataLength = allData.length
+await prisma.data.create({ data: { id: allDataLength + 1, google_id: 'no google-id', date: '1992-11-21', progress: 0, weekday: 'Funday', status: {}, users_id: u.id }})
+          // expected iterable error because of :       allUserData(users_id: Int!): [Data]!  *** MAKING A MADE UP DATE ! ! ! ***
+
             await redis.del("users")
             let allUsers = await allusersDB()
             let userStrForRedis = SERIALIZESTRING(allUsers)
