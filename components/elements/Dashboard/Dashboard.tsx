@@ -15,26 +15,27 @@ import { SET_SELECTED_DAY, TOGGLE_PROGRESS_SHOW,  } from "redux/dashboard/dashbo
 
 // utils
 import {getUserDailyDataQueryString, allUserDataQueryString} from "graphql/queries"
+import {useImage} from 'Contexts/ImgContext'
 import {usePromise} from "Contexts/Promises"
 
 export default function DashboardComponent() {
 
   const dispatch = useDispatch()
 
-  const HYDRO_DATA = useSelector( (state:RootState) => state.main.HYDRO_DATA)
-  
+  const HYDRO_DATA = useSelector( (state:RootState) => state.main.HYDRO_DATA)  
   const SELECTED_DAY = useSelector( (state:RootState) => state.dashboard.SELECTED_DAY)
+  const PROGRESS_SHOW = useSelector( (state:RootState) => state.dashboard.PROGRESS_SHOW)
+  const WEATHER_CHANNEL = useSelector( (state:RootState) => state.dashboard.WEATHER_CHANNEL)
 
-    // const [value, onChange] = useState(new Date());
+  const { confirmation, close, bg, calendar } = useImage()
+
   const [hydroData, setHydroData] = useState<any>();
-  // const [hydroDays, setHydroDays] = useState([]);
-  const [selectedDay, setSelectedDay] = useState();
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState();
+  const [selectedDay, setSelectedDay] = useState<any>();
 
   const { iPROMISEcookies } = usePromise()
 
   useEffect( () => {
+    console.log(process.env.NEXT_PUBLIC_WEATHER_APP)
     dispatch(SET_CURRENT_PAGE("/dashboard"))
 
     iPROMISEcookies()
@@ -72,37 +73,72 @@ export default function DashboardComponent() {
       if (getDay) {      
         console.log('getDay')
         console.log(getDay)
-        setSelectedDay(getDay);
-        TOGGLE_PROGRESS_SHOW()
+        // setSelectedDay(getDay);
+        dispatch(SET_SELECTED_DAY(getDay))
+        dispatch(TOGGLE_PROGRESS_SHOW())
       } 
-
-      // else {
-      //   setSelectedDay(null)
-      //   if (CALENDAR_DAY_DRIED_UP === false) TOGGLE_CALENDAR_DAY_DRIED_UP()
-      // }
     }
 
-      // if (WEATHER_CHANNEL) TOGGLE_WEATHER_CHANNEL()
-      
-      // console.log('hydrodata', HYDRO_DATA)
+    const calendarclick = () => {
+      dispatch(TOGGLE_PROGRESS_SHOW())
+    }
 
-      // const formatHighlightDay = moment(highlightedDay, 'YYYY-M-D').format('MM-DD-YYYY')      
-      // const today = new Date().getDate()  
-      // const todaySlicer = formatHighlightDay.slice(3, 5)
+
 
 
 
     return (
         <>
         <Container>
-        {/* <Container className="calendar"> */}
+
+          {
+            !PROGRESS_SHOW &&
           <Calendar
-            // tileClassName={tileClassName}
             // tileClassName={tileClassName}
             // onChange={onChange}
             // value={value}
             onClickDay={(value, event) => getDataForClickedDay(value)}
         />
+          }
+
+            {
+                  PROGRESS_SHOW === true && WEATHER_CHANNEL === false &&                        
+        <Container className="calendar-details">
+          {SELECTED_DAY ? (
+            <>
+              <div style={{ color: 'silver' }} className="calendar-date">
+                {moment(SELECTED_DAY.date, 'YYYY-M-D').format('ddd, MMM-DD-YY')}
+              </div>
+              <div className="calendar-progress">
+                        {
+                          SELECTED_DAY.progress < 1
+                               ?  <img style={{ marginTop: '0.5em'}} src={bg}/>
+                               : <pre style={{ color: 'silver' }}> Progress: {Math.ceil(SELECTED_DAY.progress)}% </pre>
+                        }
+                
+              </div>
+              <Container className="calendar-status">
+              {
+                  SELECTED_DAY.status[0] &&                            
+              SELECTED_DAY.status[0].split(',').map((d, index) => (
+                  <Container key={`div${index}`}>
+                    {d.trim() === 'check' ? (
+                      <img key={`confirm${index}`} src={confirmation} />
+                    ) : (
+                      <img key={`close${index}`} src={close} />
+                    )}
+                  </Container>
+                ))                                  
+                }
+              </Container>
+              <img style={{ height: '50px', width: '50px' }} onClick={calendarclick} src={calendar}/>
+            </>
+          ) : (
+            <Container style={{ color: 'silver', fontWeight: 'bolder' }} className="calendar-progress">Pick A Highlighted Day</Container>
+          )}
+        </Container>
+                }
+
         </Container>        
         </>                
     )
