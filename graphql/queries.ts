@@ -74,11 +74,82 @@ export const deleteUserSettingsQueryString = (users_id:number) => {
   return query
 }
 
-      // age: 25,
-      // height: 90,
-      // weight: 190,
-      // start_time: 2,
-      // end_time: 10,
-      // reminder: 1,
-      // activity: 1,
-      // users_id: 3
+export const userSettingsQueryString = (users_id:number) => {
+  const query = `
+    query { userSettings(users_id: ${users_id}) {
+      id,
+      age,
+      height,
+      weight,
+      start_time,
+      end_time,
+      reminder,
+      activity,
+      users_id
+    }
+  }
+  `
+  return query
+}
+
+export const getUserDailyDataQueryString = (users_id:number) => {
+  const query = `
+    mutation { getDailyData(users_id: ${users_id}) {
+      id,
+      google_id,
+      date,
+      progress,
+      weekday,
+      status,
+      users_id
+    }
+  }
+  `
+  return query
+}
+
+
+
+export const updateDailyDataQueryString = (users_id:number, date:string, progress:number, weekday:string, status:string[]) => {
+  const query = `
+  mutation {
+    updateDailyData(users_id: ${users_id}, date: "${date}", progress: ${progress}, weekday: "${weekday}", status: "${status}") {
+      google_id
+      date
+      weekday
+      progress
+      status
+      users_id
+    }
+  `
+  return query;
+}
+
+export const allUserDataQueryString = (users_id:number) => {
+    const query = `    
+    allUserData(users_id: 4) {
+      id
+      google_id
+      date
+      progress
+      weekday
+      status
+      users_id
+    }  
+    `
+    return query
+}
+
+// axios.post('/api/graphql', {
+//   query: `query {
+//     allUserData(users_id: 1) {
+//       id
+//       google_id
+//       date
+//       progress
+//       weekday
+//       status
+//       users_id
+//     }
+//   }`,
+// })
