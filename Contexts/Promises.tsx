@@ -85,7 +85,7 @@ export function PromiseProvider({children}:Props) {
             return iPROMISEcookies()
             .then(async(cookie:any) => {
                 const INTcookieID:number|undefined = parseInt(cookie)
-                console.log('INT ID', INTcookieID)
+                // console.log('INT ID', INTcookieID)
 
                 return axios.post('/api/graphql', {
                     query: `${allDBusersquery}`
@@ -96,20 +96,17 @@ export function PromiseProvider({children}:Props) {
                     let me:any = data.find(user => user.id === INTcookieID)
                     dispatch(SET_CURRENT_USER(me))
                     resolve(me)
-                    reject('nobody')
-                    // let me:UsersLoginInterface|undefined = data.find(user => user.id === INTcookieID)                
-                    // console.log('you are here', me)
+                    reject('nobody')                    
 
                 })
                 .catch( (err) => {
-                    console.log('err')
-                    console.log(err)
+                    // console.log('err')
+                    // console.log(err)
                 })                                
             })
         })
     }
     // * * * * * end of  main app and user PROMISES
-
 
 
     // SETTINGS PROMISES! 
@@ -127,11 +124,11 @@ export function PromiseProvider({children}:Props) {
         let schedule:any[] = []
         try {
             const mySettings = (await getUserSettingsPROMISE()).data.data.userSettings;   
-            console.log(mySettings)         
+            // console.log(mySettings)         
     if (!mySettings) {
         return "no settings"
     } else if (mySettings) {              
-        console.log('mySettings', mySettings)
+        // console.log('mySettings', mySettings)
         const SchedulePromise = new Promise(async(resolve:any, reject:any) => {
             const setSchedule = () => { for (let i = mySettings.start_time; i <= mySettings.end_time; i += mySettings.reminder) { schedule.push(i)} }
             await setSchedule()
@@ -176,7 +173,7 @@ export function PromiseProvider({children}:Props) {
             console.log(myDailyData)
             if (myDailyData.data.data.getDailyData) {
                 let dailyData = myDailyData.data.data.getDailyData
-                console.log('date', dailyData)
+                // console.log('date', dailyData)
                 // await dispatch(SET_DATE(dailyData.date))
                 // await dispatch(SET_HYDRO_DATA(dailyData))
             }
@@ -191,7 +188,8 @@ export function PromiseProvider({children}:Props) {
         .then(async(dailyData:any) => { 
             return new Promise(async(resolve:any, reject:any) => {
                 console.log('dailyData from the promise', dailyData)      
-                dailyData = dailyData.data.data.getDailyData                  
+                dailyData = dailyData.data.data.getDailyData       
+                let date = dailyData.date           
                 if (date) dispatch(SET_DATE(dailyData.date))
             if (hydro_data) dispatch(SET_HYDRO_DATA(dailyData))
             if (status) dispatch(SET_STATUS(dailyData.status))
@@ -210,19 +208,13 @@ export function PromiseProvider({children}:Props) {
                 if (disabled) {
                     dispatch(SET_DISABLED(Array(scheduleLength).fill(false)))
                 }
-
-                console.log('schedule in promise', userDailyWaterSchedule)
+                // console.log('schedule in promise', userDailyWaterSchedule)
             }           
             resolve([{hydro_data: `${HYDRO_DATA}`, hydro_schedule: `${HYDRO_SCHEDULE}`, hydro_intake: `${HYDRO_INTAKE}`, date: `${DATE}`, status: `${STATUS}`, disabled: `${DISABLED}`}])            
             reject("error")
         })
     })
     }
-    // DATA PROMISES
-
-    // SET_DATE, SET_HYDRO_DATA, SET_HYDRO_SCHEDULE, SET_STATUS, 
-
-
 
         const value = {
             tokenID,
