@@ -1,6 +1,7 @@
 import React, { createContext, useContext, ReactNode, useState } from "react";
 import axios from "axios"
 
+// components and styles.
 import Settings from "components/elements/Settings";
 import Schedule from "components/elements/Schedule/Schedule";
 
@@ -15,8 +16,6 @@ import { SettingsInterface, HydroDataInterface, UsersLoginInterface } from "util
 import { allDBusersquery, userSettingsQueryString, getUserDailyDataQueryString } from "graphql/queries";
 import waterIntakeWeightFormula from "utility/waterIntakeWeightFormula";
 
-
-
 type PromiseTypes = {
     tokenID: number
 
@@ -27,7 +26,7 @@ type PromiseTypes = {
     userSettingsSchedulePROMISE: () => any;
     userSettingsIntakePROMISE: () => any;
     getDailyDataPROMISE: () => any;
-    setDataStatePROMISE: (date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean, disabled:boolean, progress:boolean) => any;
+    setDataStatePROMISE: () => any;
 }   
 
 const PromiseDefaults = {
@@ -38,7 +37,7 @@ const PromiseDefaults = {
     userSettingsSchedulePROMISE: () => {},
     userSettingsIntakePROMISE: () => {},
     getDailyDataPROMISE: () => {},
-    setDataStatePROMISE: (date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean, disabled:boolean, progress:boolean) => {},
+    setDataStatePROMISE: () => {},
 }
 
 const PromiseContext = createContext<PromiseTypes>(PromiseDefaults)
@@ -135,8 +134,9 @@ export function PromiseProvider({children}:Props) {
         resolve(schedule.length ? schedule : "schedule fail")
       })
       return SchedulePromise
-      .then( (schedule) => {
+      .then( (schedule:any) => {
         dispatch(SET_HYDRO_SCHEDULE(schedule))
+        dispatch(SET_DISABLED(Array(schedule.length).fill(false)))
         return schedule
       })
     }
@@ -183,37 +183,30 @@ export function PromiseProvider({children}:Props) {
         catch (err) { return err }
     }
 
-    async function setDataStatePROMISE(date:boolean, hydro_data:boolean, hydro_schedule:boolean, hydro_intake:boolean, status:boolean, disabled:boolean, progress:boolean):Promise<PromiseTypes> {        
-        return getDailyDataPROMISE()
-        .then(async(dailyData:any) => { 
-            return new Promise(async(resolve:any, reject:any) => {
-                console.log('dailyData from the promise', dailyData)      
-                dailyData = dailyData.data.data.getDailyData       
-                let date = dailyData.date           
-                if (date) dispatch(SET_DATE(dailyData.date))
-            if (hydro_data) dispatch(SET_HYDRO_DATA(dailyData))
-            if (status) dispatch(SET_STATUS(dailyData.status))
-            if (progress) dispatch(SET_PROGRESS(dailyData.progress))
-            
-            if (hydro_intake) {
-                const waterintake:any = await userSettingsIntakePROMISE()
-                console.log('waterintake', waterintake)
-                dispatch(SET_HYDRO_INTAKE(waterintake))
-            }
-            if (hydro_schedule) {
-                const userDailyWaterSchedule = await userSettingsSchedulePROMISE()
-                let scheduleLength:number = userDailyWaterSchedule.length;                
-                dispatch(SET_HYDRO_SCHEDULE(userDailyWaterSchedule))
-
-                if (disabled) {
-                    dispatch(SET_DISABLED(Array(scheduleLength).fill(false)))
-                }
-                // console.log('schedule in promise', userDailyWaterSchedule)
-            }           
-            resolve([{hydro_data: `${HYDRO_DATA}`, hydro_schedule: `${HYDRO_SCHEDULE}`, hydro_intake: `${HYDRO_INTAKE}`, date: `${DATE}`, status: `${STATUS}`, disabled: `${DISABLED}`}])            
-            reject("error")
+    async function setDataStatePROMISE(){        
+        iPROMISEcookies()
+        .then( (cookie) => {    
+          const queryStr:string = getUserDailyDataQueryString(cookie)
+          // await axios.post('/api/graphql', { query: `${allDBusersquery}` })
+          if (cookie) {
+            axios
+            .post('/api/graphql', { query: `${queryStr}` })
+            .then( (dailyData:any) => {
+            new Promise( (resolve:any, reject:any) => {
+              dailyData = dailyData.data.data.getDailyData        
+              resolve(dailyData)
+              reject('err')
+            }).then( (dailyData:any) => {
+              if (dailyData) {
+                dispatch(SET_HYDRO_DATA(dailyData))
+                dispatch(SET_DATE(dailyData.date))
+                dispatch(SET_STATUS(dailyData.status))
+                dispatch(SET_PROGRESS(parseInt(dailyData.progress)))
+              }
+            })
+          })
+        }
         })
-    })
     }
 
         const value = {
