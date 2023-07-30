@@ -1,0 +1,46 @@
+$silv: silver;
+$babyblue: #73defe;
+
+#rainyDataCont {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.text { color: $babyblue; }
+.text:hover { color: silver;}
+
+#inputVal { color: $silv; text-align: center; border: 1px dashed silver; }
+#inputVal:focus { border: 1px dashed $babyblue; }
+// #input { color: #73defe; }
+// #input:focus { border: 1px dashed #73defe; }
+
+.itsRainingCont {
+    /* border: 40px solid #73defe; */
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.button { 
+    margin-top: 0.5em;
+    height: 35px;
+    width: 35px;
+    background-color: none;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border: none;
+    border-radius: 50%;
+    /* <button style={{ backgroundColor: '1px solid white', backgroundImage: `url('${curtain}')`, backgroundSize: 'cover', marginTop: '0.25em', height: '35px', width: '35px', display: peek ? "" : "none" }}> </button> */
+}
+
+.curtain { height: 250px !important; width: 250px !important; }
+
+
+@media only screen and (max-width: 600px) {
+    .text { font-size: 22px; }
+}
+
+@media only screen and (max-width: 400px) {
+    .text { font-size: 18px; }
+}

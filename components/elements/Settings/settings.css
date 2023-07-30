@@ -1,0 +1,166 @@
+.settings-container {
+  width: 60%;
+  height: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.settings-container .settings-title {
+  color: #83d9fe;
+  font-size: 2em;
+}
+
+form {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-around;
+  align-items: stretch;
+  margin: 0 auto;
+  margin-top: 0;
+}
+
+.form-group-settings {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 5px solid #83d9fe;
+  padding-bottom: 10px;
+  margin: 10px 0;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 5px;
+  padding-top: 50%;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #dedede70;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #98ddfc;
+}
+
+::-webkit-scrollbar-button {
+}
+
+textarea:focus,
+input:focus,
+select:focus {
+  outline: none;
+}
+
+input[type='range'] {
+  height: 25px;
+  -webkit-appearance: none;
+  width: 150px;
+  margin: 10px 0;
+}
+input[type='range']:focus {
+  outline: none;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 20px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: #fafafa;
+  border-radius: 10px;
+  border: 1px solid #83d9fe;
+}
+input[type='range']::-webkit-slider-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 25px;
+  background: #72d3fe;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -1px;
+}
+input[type='range']:focus::-webkit-slider-runnable-track {
+  background: #bbeafe;
+  border-radius: 10px;
+}
+
+input[type='range']:focus::-webkit-slider-thumb {
+  border: 1px solid white;
+  border-radius: 10px;
+}
+
+input[type='number'] {
+  border: 3px solid #72d3fe;
+  height: 20px;
+  width: 150px;
+  text-align: center;
+  font-family: inherit;
+  font-size: 20px;
+  cursor: inherit;
+  line-height: inherit;
+  text-align: center;
+}
+
+input[type='number']:focus {
+  background: #bbeafe;
+  border: none;
+}
+
+select {
+  appearance: none;
+  background-color: transparent;
+  border: 3px solid #72d3fe;
+  font-size: 20px;
+  width: 150px;
+  height: 30px;
+  font-family: inherit;
+  cursor: inherit;
+  line-height: inherit;
+  text-align-last: center;
+}
+
+select:focus {
+  background: rgb(114, 211, 254);
+  background: linear-gradient(
+    0deg,
+    #72d3fe 100%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  border: none;
+}
+
+button.settings {
+padding: 6px 10px;
+  margin: 10px;
+  text-transform: uppercase;
+  background-color: white;
+  border: 3px solid #72d3fe;
+  font-size: 0.5em;
+}
+
+button.settings:hover {
+  background-color: #72d3fe;
+  color: white;
+  cursor: pointer;
+}
+
+button.units:focus{
+  background-color: #72d3fe;
+}
+
+@media only screen and (width: 800px) {
+  .settings-container {
+   border: 5px solid blue;
+   width: 75%;
+  }
+
+  
+}
