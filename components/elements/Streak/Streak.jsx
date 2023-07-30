@@ -1,12 +1,18 @@
-import { render } from '@testing-library/react';
 import React, { useState, useEffect } from 'react';
+import axios from 'axios'
 // import WAPPRequest from '../../utils';
-import Spinner from '../Spinner';
-import StreakDay from '../StreakDay/StreakDay';
-import currentuserJSONparse from '../../../utility/currentuserJSONparse'
-import {useImage} from '../../../utility/Contexts/ImgContext'
-import getAllUserData from '../../../utility/fetch/getAllUserData'
-import './streak.css';
+
+// components and styles
+// import Spinner from '../Spinner';
+// import StreakDay from '../StreakDay/StreakDay';
+import styles from "./Streak.module.scss"
+
+// utils
+import {useImage} from 'Contexts/ImgContext'
+import {usePromise} from 'Contexts/Promises'
+import {getAllUserDataQueryString} from "graphql/queries"
+
+
 
 export default function Streak() {
   const [streakData, setStreakData] = useState([]);
@@ -15,25 +21,40 @@ export default function Streak() {
   const [localContHover, setLocalContHover] = useState(false)
 
   const { mouseDroplet, puppetCup, confirmation, close } = useImage()
+  const { iPROMISEcookies } = usePromise()
 
 
 
   useEffect(() => {
    (async() => {
-      let currentUser = await currentuserJSONparse()
-      let currentuserID = currentUser.id
-      let currentUserDataArray = await getAllUserData(currentuserID)
-      let dataLength = currentUserDataArray.length
-      console.log('currentUserDataArray')
-      console.log(currentUserDataArray)
 
-      if (currentUserDataArray) {
-        // also can start by finding the last day, seeing if it was perfect, and starting a new streak if it's not.
+    iPROMISEcookies()
+    .then( (cookie) => {
+      const ID = parseInt(cookie)
+      axios.post('/api/graphql', {
+        query: `query {
+          allUserData(users_id: ${ID}) {
+            google_id
+            date
+            progress
+            weekday
+            status
+            users_id
+          }
+        }`,
+      }).then( (userData) => {
+        const currentUserDataArray = userData.data.data.allUserData
+        console.log('currentUserDataArray')
+        console.log(currentUserDataArray)  
+        if (currentUserDataArray) {
+          let dataLength = currentUserDataArray.length
+          let start = dataLength < 7 ? 0 : dataLength - 7
+          let dataslice = currentUserDataArray.slice(start, dataLength)
+          setStreakData(dataslice)
+        } else { return }        
+      })
+    })
 
-        let start = dataLength < 7 ? 0 : dataLength - 7
-        let dataslice = currentUserDataArray.slice(start, dataLength)
-        setStreakData(dataslice)
-      } else { return }
    })()
 
   }, []);
@@ -46,20 +67,17 @@ export default function Streak() {
       return <div>Error</div>;
     }
     return streakData.map((day, index) => (
-      <li key={index}>
-        <img style={{ height: '15px', width: '15px', margin: '0 0.25em'}} src={day.progress === 100 ? confirmation : close}/>
-        {/* <pre style={{ height: '15px', width: '15px', margin: '0 0.25em'}}> { day.progress } </pre> */}
-        {/* <pre style={{ height: '15px', width: '15px', margin: '0 0.25em'}}> I </pre> */}
-        
-        
-      </li>
+      <div key={index}>
+        <img style={{ height: '15px', width: '15px', margin: '0 0.25em', alignSelf: 'center' }} src={day.progress === 100 ? confirmation : close}/>                        
+      </div>
     ));
   };
 
   const renderStreakExplain = () => {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
-        <img style={{ height: '35px', width: '35px'}} src={puppetCup}/>
+      <div style={{ height: '15px', width: '15px', margin: '0 0.25em', alignSelf: 'center' }}>
+      {/* <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}> */}
+        <img style={{ height: '35px', width: '35px' }} src={puppetCup}/>
       </div>
         )
   }
@@ -70,10 +88,18 @@ export default function Streak() {
   }
 
   return (
-    <div className="streak-container">
-        {
-    localContHover === false ? <ul onMouseLeave={contHoverFunc}>{streakData.length > 0 && <>{renderStreak()}</>} </ul> : <ul>{streakData.length > 0 && <>{renderStreakExplain()}</>} </ul> 
-        }          
+    <div className={styles.streakContainer}>
+        {/* {
+    localContHover === false ? <ul className={styles.ul} onMouseLeave={contHoverFunc}>{streakData.length > 0 && <>{renderStreak()}</>} </ul> : <ul>{streakData.length > 0 && <>{renderStreakExplain()}</>} </ul> 
+  } */}
+  {
+    localContHover === false 
+    ? <ul className={styles.ul} onMouseLeave={contHoverFunc}>{streakData.length > 0 && <>{renderStreak()}</>} </ul> 
+    : <ul className={styles.ul}> {renderStreakExplain()} </ul>
+    
+  }
+
+        {/* <h1 style={{ color: 'dodgerblue' }}> hey </h1> */}
     </div>
   );
 }
