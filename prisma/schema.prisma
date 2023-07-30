@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("NEXT_PUBLIC_DATABASE_URL")
+}
+
+model users {
+  id            Int         @id @default(autoincrement())
+  google_id     String?
+  icon          String?
+  username      String?
+  email         String?
+  password      String?
+  age           Int?
+  settings      settings[]
+  data          data[]
+}
+
+model settings {
+  id         Int      @id @default(autoincrement())  
+  users      users    @relation(fields: [id], references: [id])
+  age        Int
+  height     Int
+  weight     Int
+  start_time Int
+  end_time   Int
+  reminder   Int
+  activity   Int
+  users_id   Int
+}
+
+model data {
+  id          Int         @id @default(autoincrement())
+  users       users       @relation(fields: [id], references: [id])
+  google_id   String?
+  date        String?
+  progress    Int
+  weekday     String?
+  status      String[]
+  users_id    Int
+}
