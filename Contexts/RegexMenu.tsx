@@ -22,6 +22,7 @@ type RegexContextType = {
     MimgSrc: RegExp;
     MbetweenYearAndTimeZone: RegExp;
     McharBeforeFirstColon: RegExp;
+    MwordBeforeEqualsForCookies: RegExp;
     APIsplit: string;
     dayOfMonthSplit: any;
   }
@@ -45,6 +46,7 @@ type RegexContextType = {
     MimgSrc: RegExp;
     MbetweenYearAndTimeZone: any;
     McharBeforeFirstColon: RegExp;
+    MwordBeforeEqualsForCookies: RegExp;
     APIsplit: string;
     dayOfMonthSplit: any;
   }
@@ -68,6 +70,7 @@ type RegexContextType = {
     MimgSrc: /\/water_img\/(.+)/,
     MbetweenYearAndTimeZone: year + "\\s(.+?)\\sGMT",
     McharBeforeFirstColon: /^[^:]+/,
+    MwordBeforeEqualsForCookies: /^([^=]+)/gm,
     APIsplit:  "***",
     dayOfMonthSplit: year.toString().slice(-2)
   };
@@ -97,11 +100,12 @@ type RegexContextType = {
         const [McharAfterComma, setMCharAfterComma] = useState<RegExp>(/,(.*)/)      // match          if (splitEmail !== null) {       const matchedValue = splitEmail[0];      }
         const [McharBeforeAt, setMCharBeforeAt] = useState<RegExp>(/^(.*?)@/)
         const [MprePng, setMPrePng] = useState<RegExp>(/(.+)\.png/)
-        const [APIsplit, setAPISplit] = useState<string>("***")
         const [MreturnAlphaChar, setMReturnAlphaChar] = useState<RegExp>(/[A-Za-z]+/g)
         const [MimgSrc, setMImgSrc] = useState<RegExp>(/\/water_img\/(.+)/)         // this matches the characters including "/water_img" and the folliwing characters which would be the image path.
         const [MbetweenYearAndTimeZone, setMBetweenYearAndTimeZone] = useState<any>(year + "\\s(.+?)\\sGMT")  // 1) let todaydate = new Date()          2) todaydate.toString().match(MbetweenYearAndTimeZone)
         const [McharBeforeFirstColon, setMCharBeforeFirstColon] = useState<RegExp>(/^[^:]+/)
+        const [MwordBeforeEqualsForCookies, setMWordBeforeEqualsForCookies] = useState<RegExp>(/^([^=]+)/gm)
+        const [APIsplit, setAPISplit] = useState<string>("***")
         const [dayOfMonthSplit, setDayOfMonthSplit] = useState<any>(year.toString().slice(-2))
                             
         const value = {
@@ -124,6 +128,7 @@ type RegexContextType = {
             MimgSrc,
             MbetweenYearAndTimeZone,
             McharBeforeFirstColon,
+            MwordBeforeEqualsForCookies,            
             dayOfMonthSplit
         };
 
