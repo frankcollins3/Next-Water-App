@@ -1,0 +1,72 @@
+$silv: silver;
+$dedede: #dedede70;
+
+#meIconContainer {
+    display: grid;
+    justify-content: space-between; /* Add this line */
+    align-items: center;    
+    justify-content: center;
+    align-items: center;
+    background-color: $dedede;
+    min-height: 50vh;
+    min-width: 50vw;
+    padding: 1em 1em;
+    grid-gap: 0.5em;  
+}
+
+
+#boat {
+    height: 200px;
+    width: 200px;
+}
+
+#input {
+    outline: none;
+    border: none;
+    color: $silv;
+    text-align: center;
+}
+
+@media only screen and (max-width: 600px) {
+    #boat {
+        height: 150px;
+        width: 150px;
+    }
+}
+
+.icon { height: 50px; width: 50px; border-radius: 50%; }
+
+.moveBoat { animation-name: DriveBoat; animation-duration: 6s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+.moveBoatR { animation-name: DriveBoatR; animation-duration: 4s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+
+@keyframes DriveBoat {
+  0% {
+    left: 0;
+  }
+  25% {
+    margin-left: 50px;
+  }
+  50% {
+    margin-left: -100px;
+  }
+  75% {
+    margin-left: 100px;
+  }
+  100% {
+    margin-left: -50px;
+  }
+}  
+
+@keyframes DriveBoatR {
+  0% {
+    left: 0;
+  }
+  50% {
+    left: calc(100% - 7em);
+    margin-left: -50px;
+  }
+  100% {
+    left: 0;
+    margin-left: 0px;
+  }
+}
