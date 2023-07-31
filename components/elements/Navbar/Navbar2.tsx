@@ -9,10 +9,14 @@ import { useSelector, useDispatch } from 'react-redux'
 import {RootState} from "redux/store/rootReducer"
 import { SET_CURRENT_PAGE, TOGGLE_HYDRO_SETTINGS } from "redux/main/mainSlice"
 import { TOGGLE_SHOW_WEB_ICONS } from "redux/icons/iconsSlice"
+import { SET_NON_GOOGLE_IMG_URL } from "redux/logInOutGoogle/logInOutGoogleSlice"
 import { TOGGLE_WEATHER_CHANNEL } from "redux/dashboard/dashboardSlice"
 
 // utility
 import {useImage} from "Contexts/ImgContext"
+import {useRegex} from "Contexts/RegexMenu"
+import {usePromise} from "Contexts/Promises"
+import { clearCookie } from 'utility/cookies';
 
 export default function Navbar(props:any) {
 
@@ -25,6 +29,8 @@ export default function Navbar(props:any) {
 
   // useImage context for variable declared image paths 
   const { smallDroplet, msgBottle, statistics, settings, exit, clouds, home } = useImage()
+  const { MwordBeforeEqualsForCookies } = useRegex()
+  const { poorMansLogoutPROMISE, iPROMISEcookies } = usePromise()
 
   // CSS flex.
   const flexColumnCenter = ["flex", "row", "justCenterAlignCenter", "noFlexWrap"].join(" ");
@@ -76,11 +82,28 @@ export default function Navbar(props:any) {
       window.location.href = "/"
     }
 
+    const logout = (event:any) => {
+        const imgSrc:string = event.target.src
+        console.log('imgSrc', imgSrc)
+        poorMansLogoutPROMISE(imgSrc)
+        .then( () => {
+          iPROMISEcookies().then( (cookie) => {
+            console.log(cookie)
+            if (cookie === null || cookie === undefined) {
+              console.log("cookie doesn't exist anymore")  
+            }
+          })
+        })      
+    }
+
+    const loginSignupRedirect = () => { window.location.href = "/logInOutGoogle" }
+
   return (
     <Container className={styles.navbarcontainer}>
     <div>
     {/* <img src={smallDroplet || msgBottle || clouds }/>  */}
     <img onClick={leftIconClick} id="left-image" src={ CURRENT_PAGE === "/MeIcon" ? msgBottle : CURRENT_PAGE === "/dashboard" ? clouds : smallDroplet } />  
+    {/* <img onClick={leftIconClick} id="left-image" src={ CURRENT_PAGE === "/MeIcon" ? msgBottle : CURRENT_PAGE === "/dashboard" ? clouds : smallDroplet } />   */}
     
     </div>
       
@@ -88,7 +111,7 @@ export default function Navbar(props:any) {
         <img onClick={homeClick} src={home}/>
         <img onClick={statsClick} src={statistics}/>
         <img onClick={settingsClick} src={settings}/>
-      <img id="loginLogoutIcon" src={ NON_GOOGLE_IMG_URL ? NON_GOOGLE_IMG_URL : exit}/>            
+      <img onClick={NON_GOOGLE_IMG_URL ? logout : loginSignupRedirect} id="loginLogoutIcon" src={ NON_GOOGLE_IMG_URL ? NON_GOOGLE_IMG_URL : exit}/>            
       {/* <img id="loginLogoutIcon" src={NON_GOOGLE_IMG_URL && USER_ICON_CONFIRM && APP_PAGE_ICON_CONFIRM ? NON_GOOGLE_IMG_URL : exit} />         */}
           
       </div>
