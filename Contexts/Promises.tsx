@@ -15,6 +15,11 @@ import { SET_CURRENT_USER, SET_NON_GOOGLE_IMG_URL  } from "redux/logInOutGoogle/
 import { SettingsInterface, HydroDataInterface, UsersLoginInterface } from "utility/interfaceNtypes";
 import { allDBusersquery, userSettingsQueryString, getUserDailyDataQueryString } from "graphql/queries";
 import waterIntakeWeightFormula from "utility/waterIntakeWeightFormula";
+import { clearCookie } from "utility/cookies";
+
+// import {useRegex} from "Contexts/RegexMenu"
+
+// const { MwordBeforeEqualsForCookies } = useRegex()
 
 type PromiseTypes = {
     tokenID: number
@@ -27,6 +32,7 @@ type PromiseTypes = {
     userSettingsIntakePROMISE: () => any;
     getDailyDataPROMISE: () => any;
     setDataStatePROMISE: () => any;
+    poorMansLogoutPROMISE: (imgSrc:string) => any;
 }   
 
 const PromiseDefaults = {
@@ -39,6 +45,7 @@ const PromiseDefaults = {
     userSettingsIntakePROMISE: () => {},
     getDailyDataPROMISE: () => {},
     setDataStatePROMISE: () => {},
+    poorMansLogoutPROMISE: (imgSrc:string) => {},
 }
 
 const PromiseContext = createContext<PromiseTypes>(PromiseDefaults)
@@ -57,6 +64,7 @@ export function PromiseProvider({children}:Props) {
     const STATUS = useSelector( (state:RootState) => state.main.STATUS)
     const DISABLED = useSelector( (state:RootState) => state.main.DISABLED)
     const PROGRESS = useSelector( (state:RootState) => state.main.PROGRESS)
+    const NON_GOOGLE_IMG_URL = useSelector( (state:RootState) => state.logInOutGoogle.NON_GOOGLE_IMG_URL)
 
     const dispatch = useDispatch()
 
@@ -250,6 +258,36 @@ export function PromiseProvider({children}:Props) {
         })
     }
 
+    const poorMansLogoutPROMISE = (imgSrc:string) => {
+        if (imgSrc.includes(NON_GOOGLE_IMG_URL)) {
+            console.log('i like cookies')
+            const getCookiePROMISE = new Promise((cookies:any, milk:any) => {
+              if (document.cookie) {
+                  const webcookies = document.cookie.split('; ');
+                  // console.log('webcookies', webcookies)
+                  cookies(webcookies)
+                  milk('spill')
+              }
+          })
+          getCookiePROMISE
+          .then( (cookies:any) => {
+            console.log('cookies', cookies)          
+            const regex = /^([^=]+)/gm;
+            for (let i = 0; i < cookies.length; i++) {
+              // MwordBeforeEqualsForCookies
+              let match;
+              while ((match = regex.exec(cookies[i]))) {
+            //   while ((match = MwordBeforeEqualsForCookies.exec(cookies[i]))) {       // since Promises isn't technically wrapped by Provider no access to regex context
+                console.log('heres the cookies', match[1]);
+                let regexName:any = match[1]
+                clearCookie(regexName)
+                dispatch(SET_NON_GOOGLE_IMG_URL(''))
+              }
+            }
+          })
+      }
+    }
+
         const value = {
             tokenID,
             iPROMISEcookies,
@@ -259,7 +297,8 @@ export function PromiseProvider({children}:Props) {
             userSettingsSchedulePROMISE,
             userSettingsIntakePROMISE,
             getDailyDataPROMISE,
-            setDataStatePROMISE
+            setDataStatePROMISE,
+            poorMansLogoutPROMISE
         }        
 
         // let cookieID = cookieIdString.replace(RreturnNumbers, '') // replace doesn't exist on string or object
