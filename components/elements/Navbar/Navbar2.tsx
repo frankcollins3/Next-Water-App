@@ -30,7 +30,8 @@ export default function Navbar(props:any) {
   // useImage context for variable declared image paths 
   const { smallDroplet, msgBottle, statistics, settings, exit, clouds, home } = useImage()
   const { MwordBeforeEqualsForCookies } = useRegex()
-  const { poorMansLogoutPROMISE, iPROMISEcookies } = usePromise()
+  const { iPROMISEcookies } = usePromise()
+  // const { poorMansLogoutPROMISE, iPROMISEcookies } = usePromise()
 
   // CSS flex.
   const flexColumnCenter = ["flex", "row", "justCenterAlignCenter", "noFlexWrap"].join(" ");
@@ -85,15 +86,17 @@ export default function Navbar(props:any) {
     const logout = (event:any) => {
         const imgSrc:string = event.target.src
         console.log('imgSrc', imgSrc)
-        poorMansLogoutPROMISE(imgSrc)
-        .then( () => {
-          iPROMISEcookies().then( (cookie) => {
-            console.log(cookie)
-            if (cookie === null || cookie === undefined) {
-              console.log("cookie doesn't exist anymore")  
-            }
-          })
-        })      
+        // poorMansLogoutPROMISE(imgSrc)
+                if (imgSrc.includes(NON_GOOGLE_IMG_URL)) {
+            console.log('i like cookies')
+            const getCookiePROMISE = new Promise((cookies:any, milk:any) => {
+              if (document.cookie) {
+                  const webcookies = document.cookie.split('; ');
+                  // console.log('webcookies', webcookies)
+                  cookies(webcookies)
+                  milk('spill')
+              }
+          }) 
     }
 
     const loginSignupRedirect = () => { window.location.href = "/logInOutGoogle" }
