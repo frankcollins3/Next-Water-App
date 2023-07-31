@@ -57,23 +57,32 @@ export default function Settings() {
   const handleSubmit = async (e:any) => {
     e.preventDefault();
 
-    const updatedSettings = {
-      AGE,
-      WEIGHT: UNITS === 'imperial' ? WEIGHT : Math.floor(WEIGHT * 2.205),
-      HEIGHT: UNITS === 'imperial' ? HEIGHT : Math.floor(HEIGHT / 2.54),
-      START_TIME,
-      END_TIME,
-      REMINDER
-    };
+    // const updatedSettings = {
+    //   AGE,
+    //   WEIGHT: UNITS === 'imperial' ? WEIGHT : Math.floor(WEIGHT * 2.205),
+    //   HEIGHT: UNITS === 'imperial' ? HEIGHT : Math.floor(HEIGHT / 2.54),
+    //   START_TIME,
+    //   END_TIME,
+    //   REMINDER
+    // };
 
     iPROMISEcookies()
     .then(async(cookie) => {
       let IDcookieINT:any = parseInt(cookie)
+      console.log('AGE', AGE)
+      console.log('HEIGHT', HEIGHT)
+      console.log('WEIGHT', WEIGHT)
+      console.log('START_TIME', START_TIME)
+      console.log('REMINDER', REMINDER)
+      console.log('COOKIE', cookie)
+
+
       const queryStr = addUserSettingsQueryStringFunc(AGE, HEIGHT, WEIGHT, START_TIME, END_TIME, REMINDER, 0, cookie)
       axios.post('/api/graphql', { query: `${queryStr}`})
       .then(async(addedSettings:any) => {
+          console.log('addedSettings before endpoint', addedSettings)
           addedSettings = addedSettings.data.data.addUserSettings
-          console.log('addedSettings', addedSettings)
+          console.log('addedSettings after endpoint', addedSettings)
           let intake = await waterIntakeWeightFormula(addedSettings.weight)
           dispatch(SET_HYDRO_INTAKE(intake))                  
       })
