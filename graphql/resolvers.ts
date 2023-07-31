@@ -110,7 +110,7 @@ export const resolvers = {
           //   resolve(allUsersObject);
           // } else {
             // if we're else blocked then there's no cache data
-            console.log("In the NO REDIS block");
+            // console.log("In the NO REDIS block");
             try {
               // allusersDB() -----> prisma.users.findMany()
               const allusers = await allusersDB();
@@ -139,7 +139,7 @@ export const resolvers = {
       //   return allSettingsObject
       // } else {
 
-        console.log("else block NO redis settings in cache")
+        // console.log("else block NO redis settings in cache")
   //`no "settings" -> prisma.strains.findMany() -> redis-cache, so as with users: handle graphQL return data -> redis.set("settings") -> so userSettingsCheck() returns if block above next query
         const allsettings = await allsettingsDB()
         if (allsettings) {
@@ -161,7 +161,7 @@ export const resolvers = {
       //   console.log("data redis block", allDataObject)
       //   return allDataObject
       // } else {
-        console.log("else block for data NO redis cache")
+        // console.log("else block for data NO redis cache")
         const alldata = await alldataDB()
         if (alldata) {
 
@@ -195,7 +195,7 @@ export const resolvers = {
 
         // } else {
           // else block means there is no cache data & prisma must retrieve data from postgresDB to return to client.
-          console.log("NO redis. userSettings ELSE block!!!")
+          // console.log("NO redis. userSettings ELSE block!!!")
           // prisma down here to separate it from being run in case there is cache data.      DB.users retrieves the id and the id is met within loop and comparison. return that settings Data
           let allsettings = await prisma.settings.findMany()            
           let settingsLength = allsettings.length + 1
@@ -223,12 +223,12 @@ export const resolvers = {
       // //   return allUserDataObject
       // // } 
       // else {
-        console.log("NO redis. allUserData ELSE block!")
+        // console.log("NO redis. allUserData ELSE block!")
         let alldata = await alldataDB()
         const mydata = alldata.filter(waterCycleData => waterCycleData.users_id === users_id)
 
         // testing
-        console.log('mydata server', mydata)
+        // console.log('mydata server', mydata)
 
 
         // const myDataForRedis = SERIALIZESTRING(mydata)
@@ -279,7 +279,7 @@ export const resolvers = {
           
         };
       } catch (error) {
-        console.log("error", error)
+        // console.log("error", error)
         throw new Error('An error occurred during login. Please try again.');
       }
     },
@@ -322,7 +322,7 @@ export const resolvers = {
             const base64Image = Buffer.from(response.data, 'binary').toString('base64');
             return `data:${response.headers['content-type']};base64,${base64Image}`;
           } catch (error) {
-            console.error('Error fetching image:', error);
+            // console.error('Error fetching image:', error);
           }
         }    
         // If the URL is not present or fetching fails, return the random backup image
@@ -346,7 +346,9 @@ export const resolvers = {
         // this works. the above code hasn't been checked yet.
         return await prisma.settings.create({
           data: {
-            id: allSettingsLength + 1, 
+            // production bug but works in local.
+            
+            // id: allSettingsLength + 1, 
             age,
             height,
             weight,
@@ -381,10 +383,10 @@ export const resolvers = {
             
           })
           .catch((error) => {
-            console.error("Error deleting settings:", error);
+            // console.error("Error deleting settings:", error);
           });
       } else {
-        console.log("Settings not found for the specified users_id.");
+        // console.log("Settings not found for the specified users_id.");
       }
     },
 
@@ -405,24 +407,16 @@ export const resolvers = {
     },
     getDailyData: async (parent, args) => {
           const { users_id } = args
-
-      // let userDataRedis = await userDataRedisCheck(users_id)
-      // if (userDataRedis) { 
-      //   console.log("getDailyData redis block!! ! !!  !")
-      //   console.log(userDataRedis)
-      //   return PARSESERIALIZEDSTRING(userDataRedis)
-      // } else {
-        console.log("no redis so were over here!")
         const allusers = await allusersDB()
         const alldata = await alldataDB()
-        const dataLength = alldata.length
-        console.log('dataLength server  ', dataLength)
-        // let me = allusers.filter(users => users.id === users_id)
+        const dataLength = alldata.length        
         let me = allusers.find(user => user.id === users_id)
+        console.log('me getDailyData', me)
         const date = new Date()
         const dayName = date.toLocaleDateString('en-US', { weekday: 'long' } )
         const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`        
         const dateAndUserCheck = alldata.find(data => data.date === dateString && data.users_id === users_id)
+        console.log("update test! with dataLength", dataLength)
         if (dateAndUserCheck) {
           // Data already exists for the given date and user
           return dateAndUserCheck;
@@ -430,20 +424,24 @@ export const resolvers = {
         if (!me) return
         return prisma.data.create({
           data: {
-            id: dataLength + 1,
+            id: 4,
+            // id: dataLength + 1,
             google_id: me.google_id || 'no google-id',
             date: dateString,
             progress: 0,
             weekday: dayName,
             status: ['', '', '', '', ''],
             users_id: users_id
+
           }
         }).then(async(newdata) => {
-          let d = newdata;
-          // await redis.del(`userData:${users_id}`)
-          // const userDataStrForRedis = SERIALIZESTRING(d)
-          // await redis.set(`userData:${users_id}`, userDataStrForRedis)            
+          let d = newdata;          
+          return { id: d.id, google_id: d.google_id, date: d.date, progress: d.progress, weekday: d.weekday, status: d.status, users_id: d.users_id }
           return { google_id: d.google_id, date: d.date, progress: d.progress, weekday: d.weekday, status: d.status, users_id: d.users_id }
+        }).catch( () => {
+          console.log("apparently in the catch block")
+          return { id: 1, google_id: 'no google', date: 'no date', progress: 100, weekday: 'nunday', status: ['hey', 'hey', 'hey',], users_id: 4 }
+          // return { google_id: 'no google', date: 'no date', progress: 100, weekday: 'nunday', status: ['hey', 'hey', 'hey',], users_id: 4 }
         })
       // }
     },      
@@ -458,14 +456,19 @@ export const resolvers = {
       const alldata = await alldataDB()
       const today = new Date().getDate()
       const mydata = alldata.find(data => data.users_id === users_id && data.date === date)
-      if (mydata.progress > 5) return
+      console.log('mydata', mydata)
+      // if (mydata.progress > 5) return
       return await prisma.data.update({
         where: { id: mydata.id },
-        data: { progress: progress >= 96 ? 100 : progress, status: status },
+        data: { 
+          progress: progress >= 96 ? 100 : progress, 
+          status: status 
+        },
       }).then(updatedData => {
         const d = updatedData;
+        console.log('d which is data from server', d)
         // reWriteRedisUserData(users_id, d)
-        return { google_id: d.google_id, date: date, progress: d.progress, weekday: d.weekday, status: d.status, users_id: d.users_id };          
+        return { id: d.id, google_id: d.google_id, date: date, progress: d.progress, weekday: d.weekday, status: d.status, users_id: d.users_id };          
       }).catch( (err) => { return "err" } )
     },
 
