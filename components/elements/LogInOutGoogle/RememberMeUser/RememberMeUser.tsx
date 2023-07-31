@@ -14,9 +14,11 @@ import {useImage} from "Contexts/ImgContext"
 export default function RememberMeUser() {
 
     const dispatch = useDispatch()
-
+    let loggedInUsername
     const IS_LOGGED_IN_USER = useSelector( (state:RootState) => state.logInOutGoogle.IS_LOGGED_IN_USER)
-    let loggedInUsername = IS_LOGGED_IN_USER.username
+    if (IS_LOGGED_IN_USER) {
+        let loggedInUsername = IS_LOGGED_IN_USER.username
+    }
 
     const { confirmation, close } = useImage()
     const sty = styles;
