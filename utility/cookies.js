@@ -12,6 +12,8 @@ export function parseCookies(req) {
 
 // clientside
 export function getCookie() {
+    if (typeof window === 'undefined') return [];
+    
     const cookies = document.cookie.split('; ');
     return cookies;
   }
