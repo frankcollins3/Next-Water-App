@@ -35,12 +35,14 @@ export default function Panel({ date, hydroIntake, hydroSchedule, mainBorderHove
       console.log(typeof timer)
 
       console.log('borderhover', mainBorderHover)
+
+      console.log('date', date)
   }  
 
   const RenderPanel = () => {
     return (
       <>
-        <div style={{ border: mainBorderHover ? " 7.5px solid #72d3fe" : "none"}} className="panel-card">
+        <div style={{ border: "none"}} className="panel-card">
 
           {/* <Boop rotation={10} timing={150}> */}
           {/* timer < 0 || timer > 3600 * 6 || timer === NaN */}
@@ -51,23 +53,33 @@ export default function Panel({ date, hydroIntake, hydroSchedule, mainBorderHove
           <Timer hydroSchedule={hydroSchedule} timer={timer} setTimer={setTimer} />
         </div>
 
-        <div style={{ border: MAIN_BORDER_HOVER ? "7.5px solid #72d3fe" : "none"}} className="panel-card">
+        <div style={{ border: "none"}} className="panel-card">
           <Streak />
         </div>
 
-        <div style={{ border: mainBorderHover ? "7.5px solid #72d3fe" : "none"}} className="panel-card">
+        <div style={{ border: "none"}} className="panel-card">
           <div>
 
             {/* <Boop rotation={10} timing={150}> */}
-            {!calendarHover && <img style={{ position: 'relative', left: '0.25em', }} onClick={() => setCalendarHover(true) } src={calendar} /> }
-            {/* </Boop> */}
 
-            {calendarHover && <span onClick={() => setCalendarHover(false)} style={{ color: 'silver', fontWeight: 'bolder', textAlign: 'center', position: 'relative', left: '0.25em' }}>{date}</span> }
+            { !calendarHover && <img style={{ marginTop: '0.25em' }} onClick={() => setCalendarHover(true)} className="panel-target" src={calendar} /> }
+            { calendarHover && <pre onClick={() => setCalendarHover(false)} id="calendarHoverPre" style={{ color: 'silver' }}> yeah </pre> }
+            {/* { <p style={{ color: 'black' }}> {date} </p> } */}
+
+            {/* <span onClick={() => setTargetHover(false)} style={{ marginTop: '0.25em', color: 'silver', fontWeight: 'bolder', display: targetHover ? "" : "none", textAlign: 'center' }}>
+              { hydroIntake ? hydroIntake.toFixed(3) : 0} fl oz
+            </span> */}
+
+            {/* </Boop> */}
+            {/* {calendarHover && <span onClick={() => setCalendarHover(false)} style={{ color: 'silver', fontWeight: 'bolder', textAlign: 'center', position: 'relative', left: '0.25em' }}>{date}</span> } */}
+
+
           </div>
-          <div style={{ marginLeft: '12px'}}>
+          <div>
+          {/* <div style={{ marginLeft: '12px'}}> */}
 
             {/* <Boop rotation={10} timing={150}> */}
-              { !targetHover && <img style={{ marginTop: '0.25em' }} onClick={() => setTargetHover(true)} className="panel-target" src={target} /> }
+              { !targetHover && <img style={{ marginTop: '0.45em' }} onClick={() => setTargetHover(true)} className="panel-target" src={target} /> }
               {/* <img style={{ display: targetHover ? "none" : "" }} onClick={() => setTargetHover(true)} className="panel-target" src={target} /> */}
             {/* </Boop> */}
           
@@ -82,7 +94,7 @@ export default function Panel({ date, hydroIntake, hydroSchedule, mainBorderHove
     );
   } 
 
-  return <div style={{ borderTop: MAIN_BORDER_HOVER ? "none" : "7.5px dashed #dedede70", borderBottom: MAIN_BORDER_HOVER ? "none" : "7.5px dashed #dedede70"}} className="panel-container"> {RenderPanel()} </div>
+  return <div style={{ borderTop: mainBorderHover ? "none" : "7.5px dashed #dedede70", borderBottom: mainBorderHover ? "none" : "7.5px dashed #dedede70"}} className="panel-container"> {RenderPanel()} </div>
 
   }
 
