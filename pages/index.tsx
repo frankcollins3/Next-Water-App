@@ -58,10 +58,75 @@ const { iPROMISEcookies, getAndSetCurrentUserPROMISE, getUserSettingsPROMISE, us
 
     dispatch(SET_CURRENT_PAGE("/"));    
     // export const addUserSettingsQueryStringFunc = (age:number, height:number, weight:number, start_time:number, end_time:number, reminder:number, activity:number, users_id:number) => {
+
     setUserSettingsPROMISE()
     .then( (userSettings) => {
         console.log('userSettings', userSettings)
     })
+
+    // updateDailyData(users_id: ${users_id}, date: "${date}", progress: ${progress}, weekday: "${weekday}", status: ${status}) {
+
+//   const ID = 4
+//   const status = ["check", "check", "false", "false", "check"]
+
+    // axios
+    // .post('/api/graphql', {
+    //   query: `
+    //     query {
+    //       userSettings(users_id: 4) {
+    //         id
+    //         age
+    //         height
+    //         weight
+    //         start_time
+    //         end_time
+    //         reminder
+    //         activity
+    //         users_id
+    //       }
+    //     }
+    //   `
+    // })
+
+
+      // axios
+      // .post('/api/graphql', {
+      //   query: `
+      //   mutation {
+      //     getDailyData(users_id: 4) {
+      //       google_id
+      //       date
+      //       progress
+      //       weekday
+      //       status
+      //       users_id
+      //     }
+      //   }
+      //   `
+      // }).then( (dailydata) => {
+      //   console.log('dailydata', dailydata)
+      // })
+
+//      axios
+//     .post('/api/graphql', {
+//       query: `
+//       mutation {
+//         updateDailyData(users_id: 1, date: "2023-7-13", progress: 50, weekday: "Thursday", status: ["check, false, false, check, check"]) {
+//           google_id
+//           date
+//           progress
+//           weekday
+//           status
+//           users_id
+//         }
+//       }
+//       `
+//   }).then( (indexdata) => {
+//    console.log('indexdata', indexdata)
+//  })
+
+
+
   }, []);
 
   useEffect(() => { 
@@ -88,7 +153,7 @@ const { iPROMISEcookies, getAndSetCurrentUserPROMISE, getUserSettingsPROMISE, us
     <>
       <Container onMouseEnter={() => props.setMainBorderHover(true)} onMouseLeave={() => props.setMainBorderHover(false)} onClick={test} className={styles.primary}>
 
-          {
+          {/* {
             HYDRO_SCHEDULE && STATUS
                   ?
               <>
@@ -96,7 +161,11 @@ const { iPROMISEcookies, getAndSetCurrentUserPROMISE, getUserSettingsPROMISE, us
               </>
                   :
             <Dropinbucket />
-          }
+          } */}
+
+          {HYDRO_SCHEDULE && STATUS && <Schedule/>}
+          {!HYDRO_SCHEDULE[1] && <Dropinbucket/>}
+          {/* {!HYDRO_SCHEDULE && STATUS && <DropinBucket/>} */}
 
           {/* <Dropinbucket /> */}
 
@@ -113,12 +182,13 @@ const { iPROMISEcookies, getAndSetCurrentUserPROMISE, getUserSettingsPROMISE, us
               ?
          <Settings/> 
               :
-           <Panel
-           date={DATE}
-           hydroIntake={HYDRO_INTAKE}
-           hydroSchedule={HYDRO_SCHEDULE}
-           mainBorderHover={props.mainBorderHover}
-           />
+            HYDRO_SCHEDULE &&
+            <Panel
+            date={DATE}
+            hydroIntake={HYDRO_INTAKE}
+            hydroSchedule={HYDRO_SCHEDULE}
+            mainBorderHover={props.mainBorderHover}
+            />
           //  <Panel/>
         }  
               
