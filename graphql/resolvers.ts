@@ -205,7 +205,7 @@ export const resolvers = {
           let mySettings = allsettings.filter(settings => settings.users_id === users_id)
           mySettings = mySettings[0]
 // before we return the graphQL data, set:    JSON.stringify(mySettings)        into the cache so that the next query can return cache from userSettingsRedisCache() / redis.get(`userSettings${id}`)
-
+          console.log('mySettings serverside', mySettings)
           // await reWriteRedisUserSettings(me[0].id, mySettings)
           return mySettings
 
@@ -346,9 +346,6 @@ export const resolvers = {
         // this works. the above code hasn't been checked yet.
         return await prisma.settings.create({
           data: {
-            // production bug but works in local.
-            
-            // id: allSettingsLength + 1, 
             age,
             height,
             weight,
@@ -424,7 +421,6 @@ export const resolvers = {
         if (!me) return
         return prisma.data.create({
           data: {
-            id: 4,
             // id: dataLength + 1,
             google_id: me.google_id || 'no google-id',
             date: dateString,
@@ -456,7 +452,6 @@ export const resolvers = {
       const alldata = await alldataDB()
       const today = new Date().getDate()
       const mydata = alldata.find(data => data.users_id === users_id && data.date === date)
-      console.log('mydata', mydata)
       // if (mydata.progress > 5) return
       return await prisma.data.update({
         where: { id: mydata.id },
@@ -466,9 +461,10 @@ export const resolvers = {
         },
       }).then(updatedData => {
         const d = updatedData;
+        return d
         console.log('d which is data from server', d)
         // reWriteRedisUserData(users_id, d)
-        return { id: d.id, google_id: d.google_id, date: date, progress: d.progress, weekday: d.weekday, status: d.status, users_id: d.users_id };          
+        // return { id: d.id, google_id: d.google_id, date: date, progress: d.progress, weekday: d.weekday, status: d.status, users_id: d.users_id };          
       }).catch( (err) => { return "err" } )
     },
 
