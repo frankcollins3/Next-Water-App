@@ -1,7 +1,11 @@
 import {gql} from 'apollo-server-micro';
+import { GraphQLJSON } from 'graphql-scalars'
+
+
 
 // the link object will have the following fields in:                    type Link { ... fields }
 export const typeDefs = gql`
+    scalar JSON
 
     type Settings {
         age: Int
@@ -65,6 +69,11 @@ export const typeDefs = gql`
         userLogin(email: String!, password: String!): UsersLogin
         
         puppeteer(searchTerm: String!): String
+
+        getWeatherData(
+            key: string!
+            inputVal: string!
+        ): JSON
     }
 
     type Mutation {
