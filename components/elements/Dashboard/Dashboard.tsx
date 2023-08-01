@@ -115,7 +115,7 @@ export default function DashboardComponent() {
                 </div>
                 <div className="calendar-progress">
                           {
-                            selectedDay.progress < 1
+                            selectedDay.progress === 0
                                  ?  <img style={{ marginTop: '0.5em', height: '50px', width: '50px'}} src={bg}/>
                                  : <pre style={{ color: 'silver' }}> Progress: {Math.ceil(selectedDay.progress)}% </pre>
                           }                  
