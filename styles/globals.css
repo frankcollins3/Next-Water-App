@@ -348,7 +348,7 @@ abbr {
   /* .panel-container .panel-card { */
     height: 20%;
     width: 100%;
-    margin: 10px;
+    /* margin: 10px; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -390,12 +390,12 @@ abbr {
   /* .panel-container .panel-card { */
     height: 20%;
     width: 100%;
-    margin: 10px;
+    /* margin: 15px; */
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 20px 0px;
+    /* padding: 20px 20px; */
   }
   
   .panel-card:nth-child(1) {
@@ -426,7 +426,7 @@ abbr {
   }
   
   .panel-card:nth-child(3) div span {
-  margin: 0 15px;
+  /* margin: 0 15px; */
    }
   
   .panel-card img {
@@ -440,6 +440,11 @@ abbr {
   
   #panel-bot {
     margin-top: 9px;
+  }
+
+  #calendarHoverPre {
+    font-family: 'Poppins';
+    color: silver;
   }
   
   @media only screen and (max-width: 600px) {
