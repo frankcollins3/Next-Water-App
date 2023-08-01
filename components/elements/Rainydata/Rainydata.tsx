@@ -95,7 +95,7 @@ const RainyData = () => {
 
             // $(inputValJQ).attr('value') input valule is from the input it is the city name that the user specifies to determine the search params.
             console.log('submitVal', submitVal)
-            let pre_location:any = await axios.get(`http://dataservice.accuweather.com/locations/v1/cities/search?apikey=${key}&q=${inputVal}&offset=25`)
+            let pre_location:any = await axios.get(`https://dataservice.accuweather.com/locations/v1/cities/search?apikey=${key}&q=${inputVal}&offset=25`)
             // let pre_location:any = await fetch(`http://dataservice.accuweather.com/locations/v1/cities/search?apikey=${key}&q=${submitVal}&offset=25`)
             // let pre_location:any = await fetch(`http://dataservice.accuweather.com/locations/v1/cities/search?apikey=${key}&q=${teaneck}&offset=25`)
             
@@ -112,7 +112,7 @@ const RainyData = () => {
             let cityName:string = pre_location[0].EnglishName
             const rainPROMISE = new Promise(async(resolve:any, reject:any) => {         
                 //    keyToTheCity === locationKey from accuweather.com/locations/ data call.                               key is the client key to use those services as stated above. they can be confusing.
-                let currentLocationConditions:any = await axios.get(`http://dataservice.accuweather.com/currentconditions/v1/${keyToTheCity}?apikey=${key}`)      
+                let currentLocationConditions:any = await axios.get(`https://dataservice.accuweather.com/currentconditions/v1/${keyToTheCity}?apikey=${key}`)      
                 currentLocationConditions = await currentLocationConditions.json()                                
                 console.log('current conditions', currentLocationConditions)
 
