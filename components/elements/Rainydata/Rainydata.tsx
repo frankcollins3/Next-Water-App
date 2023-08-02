@@ -53,29 +53,12 @@ const RainyData = () => {
           peeek()
         }
     }
-
-    const fakeChanger = (event:any) => {
-        const key = event.nativeEvent.key        
-        
-        setInputVal(key)
-        // let key:string = event.key
-        const clickCondition = key === 'Tab' || key === 'Meta' || key === 'Control' || key === 'Shift' || key === 'Alt' || key === 'Option' || key === 'Enter' || key === 'ArrowRight' || key === 'CapsLock'
-            setInputVal("")
-        if (clickCondition) {
-            setLastChar(key)
-            return
+        const onChanger = (event: React.ChangeEvent<HTMLInputElement>) => {
+            let val = event.target.value                
+            setInputVal(val)
         }
-        if (lastChar === "Shift" && key === "ArrowLeft") { setInputVal("")}
-        if (key === "ArrowLeft") return
-        else { key === "Backspace" ? setInputVal(`${inputVal.slice(0, -1)}`) : setInputVal(`${inputVal}${key}`) }    
-        setLastChar('')
-    }
 
     const checkCityRain = async () => {        
-        // <inputid="input-val" value={inputVal}/> THIS IS FROM value={inputVal}            const [inputVal, setInputVal] = useState("city name");  * * * state comes from local declaration no redux.         
-
-        // let inputvalue:any = $(inputValJQ).attr('value')    // cant be string even if the value returned is a string because then .attr() wouldn't be available as a method to be used on such an element.
-        // setInputVal(inputvalue)
 
         let submit:any = $(inputValJQ).attr('value')    // cant be string even if the value returned is a string because then .attr() wouldn't be available as a method to be used on such an element.
         console.log('submit')
@@ -96,8 +79,9 @@ const RainyData = () => {
             // $(inputValJQ).attr('value') input valule is from the input it is the city name that the user specifies to determine the search params.
             console.log('submitVal', submitVal)
             let pre_location:any = await axios.get(`https://dataservice.accuweather.com/locations/v1/cities/search?apikey=${key}&q=${inputVal}&offset=25`)
+            console.log('pre_location', pre_location)
+
             // let pre_location:any = await fetch(`http://dataservice.accuweather.com/locations/v1/cities/search?apikey=${key}&q=${submitVal}&offset=25`)
-            // let pre_location:any = await fetch(`http://dataservice.accuweather.com/locations/v1/cities/search?apikey=${key}&q=${teaneck}&offset=25`)            
 
             // accuweatherAPI on their API usage documentation they mention you need a * * * LOCATIONKEY * * *  ----> this key and the user key are then called together to retrieve weatherdata specific to location.
             let keyToTheCity = pre_location.data[0].Key
@@ -163,10 +147,11 @@ const RainyData = () => {
         return unusedkey
     }
 
+    // const onChanger = (event:any) => {
+    //     const val = event.target.val
+    //     setInputVal(val)
+    // }
 
-
-
-    //  cloudy && <img id="img" style={{ height: '250px', width: '250px'}} onClick={pullCurtain} className={styles.curtain} src={ clouds } alt="curtain for rain"/> 
     const RenderRainyData = () => {
         return (
             <>
@@ -180,8 +165,9 @@ const RainyData = () => {
             {/* <img id="img" style={{ height: '250px', width: '250px'}} onClick={pullCurtain} className={styles.curtain} src={peek ? window : curtain} alt="curtain for rain" /> */}
 
             <h1 style={{ color: rainText ? "silver" : '#73defe' }} onClick={nounusedvars} className={styles.text}> { rainText ? rainText : peek ? "Which City" : "Is it Raining Out there?" } </h1>
-            {/* <h1 className="text"> { peek ? "Which City" : "Is it Raining Out there?" } </h1> */}
-            <input style={{ display: peek ? "" : "none" }} onKeyDown={fakeChanger} onChange={nothingFunc} onFocus={noValueFocus} type="text" id={styles.inputVal} value={inputVal}/>
+
+            <input style={{ display: peek ? "" : "none" }} onChange={onChanger} onFocus={noValueFocus} type="text" id={styles.inputVal} value={inputVal}/>
+            {/* <input style={{ display: peek ? "" : "none" }} onKeyDown={fakeChanger} onChange={nothingFunc} onFocus={noValueFocus} type="text" id={styles.inputVal} value={inputVal}/> */}
 
     <button className={styles.button} onClick={checkCityRain} style={{ display: peek ? "" : "none", backgroundImage: `url('${curtain}')`}}> </button>    
             </>
