@@ -16,7 +16,7 @@ https://github.com/frankcollins3/Next-Water-App/assets/73137934/1a0379d4-82dc-41
 #### Dashboard with calendar and location based AccuweatherAPI weather condition checker 
 https://github.com/frankcollins3/Next-Water-App/assets/73137934/41421881-0f4c-4ba7-b27e-7c716e0e2bf6
 
-#### Oauth2.0 signup + input constraint checker & cookie based login + single-drop captcha: check human behavior upon incorrect attempt.
+#### Oauth2.0 signup + input checker & cookie based login + single-drop captcha: check human behavior upon incorrect attempt.
 https://github.com/frankcollins3/Next-Water-App/assets/73137934/daa7e81c-e493-43dc-a048-64ab0e213efc
 https://github.com/frankcollins3/Next-Water-App/assets/73137934/15011653-a35a-49b2-a5a5-f008b70c4491
 
