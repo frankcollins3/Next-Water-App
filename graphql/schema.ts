@@ -1,11 +1,11 @@
 import {gql} from 'apollo-server-micro';
-import { GraphQLJSON } from 'graphql-scalars'
+// import { GraphQLJSON } from 'graphql-scalars'
+// scalar JSON
 
 
 
 // the link object will have the following fields in:                    type Link { ... fields }
 export const typeDefs = gql`
-    scalar JSON
 
     type Settings {
         age: Int
