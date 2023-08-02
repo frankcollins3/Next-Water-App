@@ -97,26 +97,20 @@ const RainyData = () => {
             console.log('submitVal', submitVal)
             let pre_location:any = await axios.get(`https://dataservice.accuweather.com/locations/v1/cities/search?apikey=${key}&q=${inputVal}&offset=25`)
             // let pre_location:any = await fetch(`http://dataservice.accuweather.com/locations/v1/cities/search?apikey=${key}&q=${submitVal}&offset=25`)
-            // let pre_location:any = await fetch(`http://dataservice.accuweather.com/locations/v1/cities/search?apikey=${key}&q=${teaneck}&offset=25`)
-            
-            console.log('pre_location', pre_location)
-            pre_location = await pre_location.json()
-            console.log('pre_location', pre_location)
-
+            // let pre_location:any = await fetch(`http://dataservice.accuweather.com/locations/v1/cities/search?apikey=${key}&q=${teaneck}&offset=25`)            
 
             // accuweatherAPI on their API usage documentation they mention you need a * * * LOCATIONKEY * * *  ----> this key and the user key are then called together to retrieve weatherdata specific to location.
-            let keyToTheCity = pre_location[0].Key
+            let keyToTheCity = pre_location.data[0].Key
             if (!keyToTheCity) { 
                 setRainText("Cant Find City. Sorry!")
             }
             let cityName:string = pre_location[0].EnglishName
             const rainPROMISE = new Promise(async(resolve:any, reject:any) => {         
                 //    keyToTheCity === locationKey from accuweather.com/locations/ data call.                               key is the client key to use those services as stated above. they can be confusing.
-                let currentLocationConditions:any = await axios.get(`https://dataservice.accuweather.com/currentconditions/v1/${keyToTheCity}?apikey=${key}`)      
-                currentLocationConditions = await currentLocationConditions.json()                                
+                let currentLocationConditions:any = await axios.get(`https://dataservice.accuweather.com/currentconditions/v1/${keyToTheCity}?apikey=${key}`)                                
                 console.log('current conditions', currentLocationConditions)
 
-                let currConditions = currentLocationConditions[0]
+                let currConditions = currentLocationConditions.data[0]
                 let weatherText:string = currConditions.WeatherText
 
         //   usage down here should be straightforward. if it hasPrecipitation, which is a boolean associated with current conditions, 1) setRainText 2) affect UI with those changes to state determined by API call data
