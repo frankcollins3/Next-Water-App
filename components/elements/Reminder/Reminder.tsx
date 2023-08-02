@@ -56,7 +56,8 @@ export default function Reminder(props: any) {
 
     let startWidth = 50
 
-    const elementWidth = startWidth += percent/5
+    // const elementWidth = startWidth += percent * 1.25
+    const elementWidth = startWidth += percent
 
     // console.log(`index: ${index}, elementWidth: ${elementWidth}`)
 
