@@ -2,62 +2,50 @@ import React, { createContext, useContext, ReactNode, useState } from "react";
 import axios from "axios"
 
 // components and styles.
+import Settings from "components/elements/Settings";
+import Schedule from "components/elements/Schedule/Schedule";
 
 // @redux/toolkit global state management
 import {RootState} from "redux/store/rootReducer"
 import {useSelector, useDispatch} from "react-redux"
-import { 
-    SET_VIEW_SELECTED_STRAIN_KEY, SET_VIEW_SELECTED_STRAIN_VALUE, SET_VIEW_SELECTED_STRAIN_INDEX, SET_VIEW_SELECTED_STRAIN, TOGGLE_SELECTED_STRAIN_SAVE_OR_NOT,
-    SET_ALL_STRAINS, SET_ALL_USERS, SET_ALL_USERNAMES, SET_ALL_EMAILS,
-} from "redux/main/mainSlice"
-
-import { 
-    TOGGLE_PASSWORD_TOO_EZ, TOGGLE_PASSWORD_LENGTH_PASS, TOGGLE_PASSWORD_NUMBER_CHAR, TOGGLE_PASSWORD_SPECIAL_CHAR, TOGGLE_PASSWORD_UPPERCASE,
-    TOGGLE_EMAIL_EXTENSION, TOGGLE_EMAIL_UNIQUE, SET_EMAIL_EXTENSION_UI,
-    TOGGLE_USERNAME_UNIQUE, TOGGLE_USERNAME_LENGTH,
- } from "redux/loginSignup/loginSignupSlice";
-// import { SET_CURRENT_USER, SET_NON_GOOGLE_IMG_URL  } from "redux/logInOutGoogle/logInOutGoogleSlice"
+import { SET_HYDRO_SCHEDULE, SET_HYDRO_DATA, SET_DATE, SET_HYDRO_INTAKE, SET_STATUS, SET_DISABLED, SET_PROGRESS  } from "redux/main/mainSlice"
+import { SET_CURRENT_USER, SET_NON_GOOGLE_IMG_URL  } from "redux/logInOutGoogle/logInOutGoogleSlice"
 
 // utils
-import { strainsINTERFACE, minersINTERFACE } from "utility/InterfaceTypes";
-import { keysAndValuesFromStrain, nonGenericKeysAndValuesFromStrain, findStrainFromAllStrains } from "utility/utilityValues"
+import { SettingsInterface, HydroDataInterface, UsersLoginInterface } from "utility/interfaceNtypes";
+import { allDBusersquery, userSettingsQueryString, getUserDailyDataQueryString } from "graphql/queries";
+import waterIntakeWeightFormula from "utility/waterIntakeWeightFormula";
+import { clearCookie } from "utility/cookies";
 
-// queries
-import { allStrainsGETquery, allMinersGETquery, userSignupQueryStringFunc } from "graphql/queries";
-import GoldRequestQL from "utility/GoldRequestQL";
+// import {useRegex} from "Contexts/RegexMenu"
+
+// const { MwordBeforeEqualsForCookies } = useRegex()
 
 type PromiseTypes = {
+    tokenID: number
 
     iPROMISEcookies: () => any;
-    setallstrainsPROMISE: () => any;
-    setallminersPROMISE: () => any;
-    deleteEndpointsPROMISE: (strain:any) => any;
-    strainIndexIncrementPROMISE: () => any;
-
-    strainClickPROMISE: (strain:string) => any;
-    
-    // SIGNUP INPUT FUNCTIONS!
-    passwordWordMatchPROMISE: () => any;
-    emailInputPROMISE: () => any;
-    usernameInputPROMISE: () => any;
-    localPasswordCheckerPROMISE: () => any;
-    userSignupPROMISE: () => any;
+    getAndSetCurrentUserPROMISE: (setLocalCurrentUsername:any) => any;
+    getUserSettingsPROMISE: () => any;
+    setUserSettingsPROMISE: () => any;
+    userSettingsSchedulePROMISE: () => any;
+    userSettingsIntakePROMISE: () => any;
+    getDailyDataPROMISE: () => any;
+    setDataStatePROMISE: () => any;
+    poorMansLogoutPROMISE: (imgSrc:string) => any;
 }   
 
 const PromiseDefaults = {
+    tokenID: 1,
     iPROMISEcookies: () => {},
-    setallstrainsPROMISE: () => {},
-    setallminersPROMISE: () => {},
-    deleteEndpointsPROMISE: (strain:any) => {},
-    strainIndexIncrementPROMISE: () => {}, // strainIndexIncrementPROMISE: (index, strain) => {},
-    strainClickPROMISE: (strain:string) => {},
-
-    // SIGNUP INPUT FUNCTIONS!
-    passwordWordMatchPROMISE: () => {},
-    emailInputPROMISE: () => {},
-    usernameInputPROMISE: () => {},
-    localPasswordCheckerPROMISE: () => {},
-    userSignupPROMISE: () => {},
+    getAndSetCurrentUserPROMISE: (setLocalCurrentUsername:any) => {},
+    setUserSettingsPROMISE: () => {},
+    getUserSettingsPROMISE: () => {},
+    userSettingsSchedulePROMISE: () => {},
+    userSettingsIntakePROMISE: () => {},
+    getDailyDataPROMISE: () => {},
+    setDataStatePROMISE: () => {},
+    poorMansLogoutPROMISE: (imgSrc:string) => {},
 }
 
 const PromiseContext = createContext<PromiseTypes>(PromiseDefaults)
@@ -69,39 +57,18 @@ export function usePromise() {
 type Props = { children: ReactNode }
 
 export function PromiseProvider({children}:Props) {
+    const HYDRO_DATA = useSelector( (state:RootState) => state.main.HYDRO_DATA)
+    const HYDRO_SCHEDULE = useSelector( (state:RootState) => state.main.HYDRO_SCHEDULE)
+    const HYDRO_INTAKE = useSelector( (state:RootState) => state.main.HYDRO_INTAKE)
+    const DATE = useSelector( (state:RootState) => state.main.DATE)
+    const STATUS = useSelector( (state:RootState) => state.main.STATUS)
+    const DISABLED = useSelector( (state:RootState) => state.main.DISABLED)
+    const PROGRESS = useSelector( (state:RootState) => state.main.PROGRESS)
+    const NON_GOOGLE_IMG_URL = useSelector( (state:RootState) => state.logInOutGoogle.NON_GOOGLE_IMG_URL)
 
     const dispatch = useDispatch()
 
-    // regex expressions since this is in Contexts which won't have access to Contexts/Regex
-
-    // state from mainSlice
-    const VIEW_SELECTED_STRAIN = useSelector( (state:RootState) => state.main.VIEW_SELECTED_STRAIN)
-    const VIEW_SELECTED_STRAIN_INDEX = useSelector( (state:RootState) => state.main.VIEW_SELECTED_STRAIN_INDEX)
-    const ALL_STRAINS = useSelector( (state:RootState) => state.main.ALL_STRAINS)
-    const SELECTED_STRAIN_SAVE_OR_NOT = useSelector( (state:RootState) => state.main.SELECTED_STRAIN_SAVE_OR_NOT)        
-    const ALL_EMAILS = useSelector( (state:RootState) => state.main.ALL_EMAILS)        
-    const ALL_USERNAMES = useSelector( (state:RootState) => state.main.ALL_USERNAMES)        
-
-    // state from loginSignupSlice
-    const PASSWORD_UPPERCASE = useSelector( (state:RootState) => state.loginSignup.PASSWORD_UPPERCASE)
-    const PASSWORD_LENGTH_PASS = useSelector( (state:RootState) => state.loginSignup.PASSWORD_LENGTH_PASS)
-    const PASSWORD_NUMBER_CHAR = useSelector( (state:RootState) => state.loginSignup.PASSWORD_NUMBER_CHAR)
-    const PASSWORD_SPECIAL_CHAR = useSelector( (state:RootState) => state.loginSignup.PASSWORD_SPECIAL_CHAR)
-
-    const SIGNUP_PASSWORD_INPUT = useSelector( (state:RootState) => state.loginSignup.SIGNUP_PASSWORD_INPUT)
-    const PASSWORD_TOO_EZ = useSelector( (state:RootState) => state.loginSignup.PASSWORD_TOO_EZ)
-    const PASSWORD_TOO_EZ_BANK = useSelector( (state:RootState) => state.loginSignup.PASSWORD_TOO_EZ_BANK)
-
-    const SIGNUP_EMAIL_INPUT = useSelector( (state:RootState) => state.loginSignup.SIGNUP_EMAIL_INPUT)
-    const EMAIL_EXTENSION = useSelector( (state:RootState) => state.loginSignup.EMAIL_EXTENSION)
-    const EMAIL_UNIQUE = useSelector( (state:RootState) => state.loginSignup.EMAIL_UNIQUE)
-    
-    const SIGNUP_USERNAME_INPUT = useSelector( (state:RootState) => state.loginSignup.SIGNUP_USERNAME_INPUT)
-    const USERNAME_LENGTH = useSelector( (state:RootState) => state.loginSignup.USERNAME_LENGTH)
-    const USERNAME_UNIQUE = useSelector( (state:RootState) => state.loginSignup.USERNAME_UNIQUE)
-    
-    const SIGNUP_AGE_INPUT = useSelector( (state:RootState) => state.loginSignup.SIGNUP_AGE_INPUT)
-
+    const [tokenID, setTokenID] = useState<number>(0)
 
     // main app and user PROMISES
     function iPROMISEcookies() {
@@ -115,276 +82,226 @@ export function PromiseProvider({children}:Props) {
         return getCookiePROMISE
         .then( (c:any) => {
             let cookieIdString = c[1]
-            if (cookieIdString.slice(3)) {
-                const sliceID = cookieIdString.slice(3)
-                return sliceID || "no ID to return! sorry!"
-                // setTokenID(sliceID)
-            }
+            const sliceID = cookieIdString.slice(3)
+            return sliceID || "no ID to return! sorry!"
+            // setTokenID(sliceID)
         })
     }
 
-    function setallstrainsPROMISE() {
+    function getAndSetCurrentUserPROMISE(setLocalCurrentUsername) {
         return new Promise( (resolve:any, reject:any) => {
-            return GoldRequestQL(`${allStrainsGETquery}`)
-            .then((response:any) => {
-              let strains:strainsINTERFACE = response.data
-              strains = response.data.data.allStrainsGET
-              dispatch(SET_ALL_STRAINS(strains))
-              resolve(strains)
+            return iPROMISEcookies()
+            .then(async(cookie:any) => {
+                const INTcookieID:number|undefined = parseInt(cookie)
+                // console.log('INT ID', INTcookieID)
+
+                return axios.post('/api/graphql', {
+                    query: `${allDBusersquery}`
+                })
+                .then( (data:any) => {
+                    data = data.data.data.allDBusers
+                    console.log('data before .find', data)
+                    let me:any = data.find(user => user.id === INTcookieID)
+                    dispatch(SET_CURRENT_USER(me))
+                    dispatch(SET_NON_GOOGLE_IMG_URL(me.icon))
+                    setLocalCurrentUsername(me.username)
+                    resolve(me)
+                    reject('nobody')                    
+
+                })
+                .catch( (err) => {
+                    // console.log('err')
+                    // console.log(err)
+                })                                
             })
-            .catch((error) => {
-              reject(error)
-            });
         })
     }
-
-
-    function setallminersPROMISE() {
-        return GoldRequestQL(`${allMinersGETquery}`)
-        .then( (response:any) => {
-            console.log('response in promise', response)
-            const miners = response.data.data.allMinersGET
-
-            let allusernames = miners.map(users => users.username)
-            let allemails = miners.map(users => users.email)
-            dispatch(SET_ALL_USERNAMES(allusernames))
-            dispatch(SET_ALL_EMAILS(allemails))
-            return miners
-
-        }).catch( (err) => {
-            console.log('err', err)
-        })
-    }
-
-    // GoldRequestQL(`${allMinersGETquery}`)
-    //     .then( (data:any) => {
-    //         console.log('client data', data)
-    //         const miners = data.data.data.allMinersGET
-    //         let allusernames = miners.map(users => users.username)
-    //         let allemails = miners.map(users => users.email)
-    //         console.log('allusernames', allusernames)
-    //         console.log('allemails', allemails)
-    //     })
+    // * * * * * end of  main app and user PROMISES
 
 
 
-    function deleteEndpointsPROMISE(strain:any) {   // cant do generic because the endpoints cant be deleted and won't change returned data from generics because different components need it.
-        return new Promise( (resolve:any, reject:any) => {
-            const keysAndValues = nonGenericKeysAndValuesFromStrain(strain)
-            const keys = keysAndValues.strainKeys
-            const values = keysAndValues.strainValues
-            const strainKeys = { strain: keys[0], dominant: keys[2], funfact: keys[3], taste: keys[5], smell: keys[6], gold: keys[7], nugget: keys[8], thc: keys[9], cbd: keys[10] }
-            const strainValues = { strain: values[0], dominant: values[2], funfact: values[3], taste: values[5], smell: values[6], gold: values[7], nugget: values[8], thc: values[9], cbd: values[10] }            
-            resolve( { strainKeys: strainKeys, strainValues: strainValues} )
-            reject("nothing")
+    // SETTINGS PROMISES! 
+    function getUserSettingsPROMISE () {
+        return iPROMISEcookies()
+        .then(async(cookieID) => {
+            const ID = parseInt(cookieID)
+            const userSettingsQueryStr = await userSettingsQueryString(ID)
+            let mySettings = await axios.post('/api/graphql', { query: `${userSettingsQueryStr}` } )
+            if (mySettings) {
+                return mySettings                
+            } else {
+                return 
+            }
         })        
     }
 
-    function strainIndexIncrementPROMISE() {
-        const keys = VIEW_SELECTED_STRAIN.strainKeys
-        const values = VIEW_SELECTED_STRAIN.strainValues
-
-        if (VIEW_SELECTED_STRAIN_INDEX === 1) {
-            dispatch(SET_VIEW_SELECTED_STRAIN_KEY(keys.strain))
-            dispatch(SET_VIEW_SELECTED_STRAIN_VALUE(values.strain))            
-   }
-   if (VIEW_SELECTED_STRAIN_INDEX === 2) {
-            dispatch(SET_VIEW_SELECTED_STRAIN_KEY(keys.dominant))
-            dispatch(SET_VIEW_SELECTED_STRAIN_VALUE(values.dominant))            
-   }
-   if (VIEW_SELECTED_STRAIN_INDEX === 3) {
-            dispatch(SET_VIEW_SELECTED_STRAIN_KEY(keys.gold))
-            dispatch(SET_VIEW_SELECTED_STRAIN_VALUE(values.gold))            
-   }
-   if (VIEW_SELECTED_STRAIN_INDEX === 3) {
-            dispatch(SET_VIEW_SELECTED_STRAIN_KEY(keys.nugget))
-            dispatch(SET_VIEW_SELECTED_STRAIN_VALUE(values.nugget))            
-   }
-   if (VIEW_SELECTED_STRAIN_INDEX === 4) {
-       dispatch(SET_VIEW_SELECTED_STRAIN_KEY(keys.smell))
-       dispatch(SET_VIEW_SELECTED_STRAIN_VALUE(values.smell))            
-   }
-   if (VIEW_SELECTED_STRAIN_INDEX === 5) {
-            dispatch(SET_VIEW_SELECTED_STRAIN_KEY(keys.taste))
-            dispatch(SET_VIEW_SELECTED_STRAIN_VALUE(values.taste))            
-   }
-   if (VIEW_SELECTED_STRAIN_INDEX === 6) {
-            dispatch(SET_VIEW_SELECTED_STRAIN_KEY(keys.thc))
-            dispatch(SET_VIEW_SELECTED_STRAIN_VALUE(values.thc))            
-   }
-   if (VIEW_SELECTED_STRAIN_INDEX === 7) {
-            dispatch(SET_VIEW_SELECTED_STRAIN_KEY(keys.cbd))
-            dispatch(SET_VIEW_SELECTED_STRAIN_VALUE(values.cbd))            
-   }
-   if (VIEW_SELECTED_STRAIN_INDEX === 8) {
-            dispatch(SET_VIEW_SELECTED_STRAIN_KEY(keys.funfact))
-            dispatch(SET_VIEW_SELECTED_STRAIN_VALUE(values.funfact))            
-   }
-   if (VIEW_SELECTED_STRAIN_INDEX === 9) {
-       console.log("9 golden lives!")
-       // this is where we save the strain!
-            dispatch(SET_VIEW_SELECTED_STRAIN_INDEX(0))
-            dispatch(TOGGLE_SELECTED_STRAIN_SAVE_OR_NOT())
-   }
+    function setUserSettingsPROMISE () {
+        return iPROMISEcookies()
+        .then(async(cookieID) => {
+            const ID = parseInt(cookieID)
+            const queryStr:string = userSettingsQueryString(ID)
+           return axios.post('/api/graphql', { query: `${queryStr}` } )
+            .then(async(mySettings:any) => {
+                if (!mySettings.data.data.userSettings) { return }
+             let schedule:any[] = []
+             mySettings = mySettings.data.data.userSettings
+             console.log('mySettings', mySettings)
+             let intake = await waterIntakeWeightFormula(mySettings.weight)
+             console.log('intake', intake)
+             dispatch(SET_HYDRO_INTAKE(intake))
+            const SchedulePromise = new Promise(async(resolve:any, reject:any) => {
+               const setSchedule = () => { for (let i = mySettings.start_time; i <= mySettings.end_time; i += mySettings.reminder) { schedule.push(i)} }
+               await setSchedule()
+             resolve(schedule.length ? schedule : "schedule fail")
+         })
+         return SchedulePromise
+         .then( (schedule:any) => {
+           dispatch(SET_HYDRO_SCHEDULE(schedule))
+           dispatch(SET_DISABLED(Array(schedule.length).fill(false)))
+           return schedule
+         })
+       }) 
+        })
     }
 
-    const strainClickPROMISE = async (strain:string) => {
-            if (SELECTED_STRAIN_SAVE_OR_NOT) dispatch(TOGGLE_SELECTED_STRAIN_SAVE_OR_NOT())
 
-            let clickedStrain = findStrainFromAllStrains(strain, ALL_STRAINS)
-            clickedStrain = await deleteEndpointsPROMISE(clickedStrain)
-            .then( (clickedStrain:any) => {
-                if (clickedStrain.strainValues) {    
-                    if (strain.length > 1 && VIEW_SELECTED_STRAIN.strainValues && strain === VIEW_SELECTED_STRAIN.strainValues.strain ) {
-                        dispatch(SET_VIEW_SELECTED_STRAIN(clickedStrain))    
-                        dispatch(SET_VIEW_SELECTED_STRAIN_INDEX(VIEW_SELECTED_STRAIN_INDEX + 1))            
-                    } else {
-                        dispatch(SET_VIEW_SELECTED_STRAIN(clickedStrain))
-                        dispatch(SET_VIEW_SELECTED_STRAIN_KEY("strain"))
-                        dispatch(SET_VIEW_SELECTED_STRAIN_VALUE(strain))
-                        dispatch(SET_VIEW_SELECTED_STRAIN_INDEX(1))
-                    }
+    async function userSettingsSchedulePROMISE() {
+        let schedule:any[] = []
+        try {
+            const mySettings:any = await getUserSettingsPROMISE()
+            
+            // console.log(mySettings)         
+    if (!mySettings) {
+        return "no settings"
+    } else if (mySettings) {              
+        // console.log('mySettings', mySettings)
+        const SchedulePromise = new Promise(async(resolve:any, reject:any) => {
+            const setSchedule = () => { for (let i = mySettings.start_time; i <= mySettings.end_time; i += mySettings.reminder) { schedule.push(i)} }
+            await setSchedule()
+        resolve(schedule.length ? schedule : "schedule fail")
+      })
+      return SchedulePromise
+      .then( (schedule:any) => {
+        dispatch(SET_HYDRO_SCHEDULE(schedule))
+        dispatch(SET_DISABLED(Array(schedule.length).fill(false)))
+        return schedule
+      })
+    }
+    }
+    catch(err:any) { return err }    
+    // catch(err) { throw new Error(err) }    
+}
+
+    async function userSettingsIntakePROMISE() {
+        return new Promise( (resolve:any, reject:any) => {
+            getUserSettingsPROMISE()
+            .then(async(mySettings:any) => {
+                console.log('mySettings', mySettings)
+                mySettings = mySettings.data.data.userSettings
+                let weight:number = mySettings.weight
+                const intake:number = await waterIntakeWeightFormula(weight)
+                if (intake > 1) {
+                    dispatch(SET_HYDRO_INTAKE(intake))
+                    resolve(intake)
                 }
+                reject('cant take in')
             })
-    }
-
-    const passwordWordMatchPROMISE = () => {
-        let wordmatchPROMISE = new Promise( (resolve:any, reject:any) => {
-            let nonNumChar = SIGNUP_PASSWORD_INPUT.match(/[^0-9]/g)?.join(" ").replace(/\s/g, '')
-            resolve(nonNumChar)
-            reject("you reject!")
         })
-        wordmatchPROMISE
-        .then( (wordGex) => {   
-        let matchCount = 0;
-        console.log('wordGex in the promise', wordGex)
-    const matchCountPromise = new Promise(async(resolve:any, reject:any) => {
-        await PASSWORD_TOO_EZ_BANK.forEach( (word) => {
-            if (word === wordGex && PASSWORD_TOO_EZ === false) {
-                matchCount++;
-            } else if (word !== wordGex && PASSWORD_TOO_EZ === true) {
-                return
+    }
+// * * *  END OF SETTINGS PROMISES * * * 
+
+    // DATA PROMISES
+    async function getDailyDataPROMISE() {
+        try {
+          return iPROMISEcookies()
+          .then(async(cookieID) => {
+            const ID = parseInt(cookieID)
+            const userDailyDataQueryStr = await getUserDailyDataQueryString(ID)
+            let myDailyData = await axios.post('/api/graphql', { query: `${userDailyDataQueryStr}`})
+            console.log(myDailyData)
+            if (myDailyData.data.data.getDailyData) {
+                let dailyData = myDailyData.data.data.getDailyData
+                // console.log('date', dailyData)
+                // await dispatch(SET_DATE(dailyData.date))
+                // await dispatch(SET_HYDRO_DATA(dailyData))
             }
+            return myDailyData
         })
-        resolve(matchCount)
-        reject("none")
-    })
-    matchCountPromise
-    .then( (matchCount:any) => {
-        if (matchCount > 0 && PASSWORD_TOO_EZ === false) {
-            dispatch(TOGGLE_PASSWORD_TOO_EZ())
-        } else if (matchCount === 0 && PASSWORD_TOO_EZ === true) {
-            dispatch(TOGGLE_PASSWORD_TOO_EZ())
-        }            
-    })      
-}) 
-}
-
-const localPasswordCheckerPROMISE = () => {            
-    if (/\d+/g.test(SIGNUP_PASSWORD_INPUT) && PASSWORD_NUMBER_CHAR === false) {
-        // if (PASSWORD_NUMBER_CHAR === false) {
-            dispatch(TOGGLE_PASSWORD_NUMBER_CHAR())            
-    } else if (SIGNUP_PASSWORD_INPUT.length) {
-            if (SIGNUP_PASSWORD_INPUT.length >= 8 && PASSWORD_LENGTH_PASS === false) {
-                dispatch(TOGGLE_PASSWORD_LENGTH_PASS())
-            } else if (SIGNUP_PASSWORD_INPUT.length < 8 && PASSWORD_LENGTH_PASS === true) {
-                dispatch(TOGGLE_PASSWORD_LENGTH_PASS())
-            }
-    }
-        else if (PASSWORD_NUMBER_CHAR === true && !/\d+/g.test(SIGNUP_PASSWORD_INPUT)) {
-        dispatch(TOGGLE_PASSWORD_NUMBER_CHAR())
-    }
-    if (/[A-Z\s]/g.test(SIGNUP_PASSWORD_INPUT) && PASSWORD_UPPERCASE === false) {
-        dispatch(TOGGLE_PASSWORD_UPPERCASE())
-    } else if (!/[A-Z\s]/g.test(SIGNUP_PASSWORD_INPUT) && PASSWORD_UPPERCASE === true) {
-        dispatch(TOGGLE_PASSWORD_UPPERCASE())
-    }
-    
-    if (/[!@#$%^&()*?<>,.=+-]/g.test(SIGNUP_PASSWORD_INPUT) && PASSWORD_SPECIAL_CHAR === false) {
-        dispatch(TOGGLE_PASSWORD_SPECIAL_CHAR())
-    } else if (!/[!@#$%^&()*?<>,.=+-]/g.test(SIGNUP_PASSWORD_INPUT) && PASSWORD_SPECIAL_CHAR === true ){
-        dispatch(TOGGLE_PASSWORD_SPECIAL_CHAR())
-    }            
-}
-
-const emailInputPROMISE = () => {
-    if (ALL_EMAILS.includes(SIGNUP_EMAIL_INPUT) && EMAIL_UNIQUE === false) {
-        dispatch(TOGGLE_EMAIL_UNIQUE())
-    } else if (!ALL_EMAILS.includes(SIGNUP_EMAIL_INPUT) && EMAIL_UNIQUE === true) {
-        dispatch(TOGGLE_EMAIL_UNIQUE())            
+        }   
+        catch (err) { return err }
     }
 
-    let emailExtension:any = SIGNUP_EMAIL_INPUT.match(/(\.\w+)$/)
-    if (emailExtension) {
-        emailExtension = emailExtension[1]
-        console.log('emailExtension', emailExtension)
-        console.log('length', emailExtension.length)
-        if (emailExtension.length === 4) {
-            if (emailExtension === ".com" || emailExtension === ".org" || emailExtension === ".net") {
-                if (EMAIL_EXTENSION === false) {
-                    dispatch(TOGGLE_EMAIL_EXTENSION())
-                    dispatch(SET_EMAIL_EXTENSION_UI(emailExtension))
-                }
-            }
-        } else if (emailExtension.length < 4) {
-            if (EMAIL_EXTENSION === true) {
-                dispatch(TOGGLE_EMAIL_EXTENSION())
-                dispatch(SET_EMAIL_EXTENSION_UI(''))
-            }
+    async function setDataStatePROMISE(){        
+        return iPROMISEcookies()
+        .then( (cookie) => {    
+          const queryStr:string = getUserDailyDataQueryString(cookie)
+          // await axios.post('/api/graphql', { query: `${allDBusersquery}` })
+          if (cookie) {
+           return axios.post('/api/graphql', { query: `${queryStr}` })
+            .then( (dailyData:any) => {
+            return new Promise( (resolve:any, reject:any) => {
+              dailyData = dailyData.data.data.getDailyData        
+              resolve(dailyData)
+              reject('err')
+            }).then( (dailyData:any) => {
+                console.log('dailyData in the then block', dailyData)
+              if (dailyData) {
+                dispatch(SET_HYDRO_DATA(dailyData))
+                dispatch(SET_DATE(dailyData.date))
+                dispatch(SET_STATUS(dailyData.status))
+                dispatch(SET_PROGRESS(parseInt(dailyData.progress)))
+                return dailyData
+              }
+            })
+          })
         }
-    } else {
-        if (EMAIL_EXTENSION === true) {
-            dispatch(TOGGLE_EMAIL_EXTENSION)
-        }
-    }
-}
-
-const usernameInputPROMISE = () => {
-
-    if (SIGNUP_USERNAME_INPUT.length >= 5 && SIGNUP_USERNAME_INPUT.length < 18) {
-        if (USERNAME_LENGTH === false) { dispatch(TOGGLE_USERNAME_LENGTH()) }
-    } else {
-        if (USERNAME_LENGTH === true) { dispatch(TOGGLE_USERNAME_LENGTH())}
-    }
-
-    if (ALL_USERNAMES.includes(SIGNUP_USERNAME_INPUT) && USERNAME_UNIQUE === false) {
-        console.log("username includes it!")
-        dispatch(TOGGLE_USERNAME_UNIQUE())
-    } else if (!ALL_USERNAMES.includes(SIGNUP_USERNAME_INPUT) && USERNAME_UNIQUE === true) {            
-        dispatch(TOGGLE_USERNAME_UNIQUE())
-    }
-}
-
-
-const userSignupPROMISE = () => {
-    const queryStr = userSignupQueryStringFunc(`${SIGNUP_USERNAME_INPUT}`, `${SIGNUP_EMAIL_INPUT}`, `${SIGNUP_AGE_INPUT}`, `${SIGNUP_PASSWORD_INPUT}`)
-    // const queryStr = userSignupQueryStringFunc("chasethrillz", "cgoode@jodo.com", 30, "chase123")
-    return axios.post('/api/graphql', {query:`${queryStr}`})
-        .then( (userSignup) => {
-            console.log('signed up', userSignup)
-            let user:minersINTERFACE = userSignup.data.data.userSignup
-            return user
         })
-}
+    }
 
-
+    const poorMansLogoutPROMISE = (imgSrc:string) => {
+        if (imgSrc.includes(NON_GOOGLE_IMG_URL)) {
+            console.log('i like cookies')
+            const getCookiePROMISE = new Promise((cookies:any, milk:any) => {
+              if (document.cookie) {
+                  const webcookies = document.cookie.split('; ');
+                  // console.log('webcookies', webcookies)
+                  cookies(webcookies)
+                  milk('spill')
+              }
+          })
+          getCookiePROMISE
+          .then( (cookies:any) => {
+            console.log('cookies', cookies)          
+            const regex = /^([^=]+)/gm;
+            for (let i = 0; i < cookies.length; i++) {
+              // MwordBeforeEqualsForCookies
+              let match;
+              while ((match = regex.exec(cookies[i]))) {
+            //   while ((match = MwordBeforeEqualsForCookies.exec(cookies[i]))) {       // since Promises isn't technically wrapped by Provider no access to regex context
+                console.log('heres the cookies', match[1]);
+                let regexName:any = match[1]
+                clearCookie(regexName)
+                dispatch(SET_NON_GOOGLE_IMG_URL(''))
+              }
+            }
+          })
+      }
+    }
 
         const value = {
+            tokenID,
             iPROMISEcookies,
-            setallstrainsPROMISE,
-            setallminersPROMISE,
-            deleteEndpointsPROMISE,
-            strainIndexIncrementPROMISE,
-            strainClickPROMISE,
-
-            // SIGNUP INPUT FUNCTIONS!
-            passwordWordMatchPROMISE,
-            localPasswordCheckerPROMISE,
-            emailInputPROMISE,
-            usernameInputPROMISE,
-            userSignupPROMISE
+            getAndSetCurrentUserPROMISE,  
+            setUserSettingsPROMISE,          
+            getUserSettingsPROMISE,
+            userSettingsSchedulePROMISE,
+            userSettingsIntakePROMISE,
+            getDailyDataPROMISE,
+            setDataStatePROMISE,
+            poorMansLogoutPROMISE
         }        
 
+        // let cookieID = cookieIdString.replace(RreturnNumbers, '') // replace doesn't exist on string or object
 
     return (
         <PromiseContext.Provider value={value}>
@@ -393,5 +310,3 @@ const userSignupPROMISE = () => {
     )
 
 }
-
-
