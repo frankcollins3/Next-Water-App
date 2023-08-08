@@ -1,69 +1,82 @@
-import {useState} from 'react'
-// @reduxjs/toolkit
-import {useSelector, useDispatch} from 'react-redux'
-import { RootState } from 'redux/store/rootReducer';
-import { SET_LOGIN_EMAIL_INPUT, SET_LOGIN_PASSWORD_INPUT } from 'redux/loginSignup/loginSignupSlice';
+import React, {useState} from 'react'
+import {useImage} from 'Contexts/ImgContext'
 
 // components and styles
-import Container from "react-bootstrap/Container"
 import styles from "./LoginInput.module.scss"
-import { PromiseProvider } from 'Contexts/Promises';
 
-// utils
-import { LoginInterface } from 'utility/InterfaceTypes';
-
-export default function LoginInput(props: LoginInterface) {
-    return <RENDER inputType={props.inputType} />
-}
+// @redux/toolkit global state management
+import { RootState } from "redux/store/rootReducer"
+import { useSelector, useDispatch } from 'react-redux';
+import { SET_EMAIL_OR_USERNAME_LOGIN_INPUT, SET_PASSWORD_LOGIN_INPUT, TOGGLE_LOGIN_INPUT_FOCUS, TOGGLE_LET_USER_REMEMBER_ME } from "redux/logInOutGoogle/logInOutGoogleSlice"
 
 
-const RENDER = (props:LoginInterface) => {
-    const [alreadyFocusedEmail, setAlreadyFocusedEmail] = useState(false)
-    const [alreadyFocusedPassword, setAlreadyFocusedPassword] = useState(false)
+// import { SET_EMAIL_OR_USERNAME_LOGIN_INPUT, SET_PASSWORD_LOGIN_INPUT } from '../../../redux/actionsimport {  } from "utility/UtilityValues"
+import {nothingFunc, passwordTogglevalue, flexPropertyColumnCombo} from 'utility/UtilityValues'
+
+// interface Props { inputType: string, EMAIL_OR_USERNAME_LOGIN_INPUT: string, PASSWORD_LOGIN_INPUT: string, SET_EMAIL_OR_USERNAME_LOGIN_INPUT: any SET_PASSWORD_LOGIN_INPUT: any }
+interface Props { inputType: string }
+
+
+export default function LoginInput(props: Props) {
 
     const dispatch = useDispatch()
 
-    const passwordInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-            let value:string = event.target.value
-            dispatch(SET_LOGIN_PASSWORD_INPUT(value))
-    };
+    const EMAIL_OR_USERNAME_LOGIN_INPUT = useSelector((state: RootState) => state.logInOutGoogle.EMAIL_OR_USERNAME_LOGIN_INPUT);
+    const PASSWORD_LOGIN_INPUT = useSelector((state: RootState) => state.logInOutGoogle.PASSWORD_LOGIN_INPUT);
+    const LOGIN_INPUT_FOCUS = useSelector((state: RootState) => state.logInOutGoogle.LOGIN_INPUT_FOCUS);
+    const LOGIN_PASSWORD_SHOW_CLICK = useSelector((state: RootState) => state.logInOutGoogle.LOGIN_PASSWORD_SHOW_CLICK);
+    const LET_USER_REMEMBER_ME = useSelector((state: RootState) => state.logInOutGoogle.LET_USER_REMEMBER_ME);
+    const IS_LOGGED_IN_USER = useSelector((state: RootState) => state.logInOutGoogle.IS_LOGGED_IN_USER);
 
-    const emailInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch(SET_LOGIN_EMAIL_INPUT(event.target.value))
-    }
+    const [loginPasswordToggleValue, setLoginPasswordToggleValue] = useState(false)
 
-    const passwordReset = () => { 
-        if (alreadyFocusedEmail === false) {
-            dispatch(SET_LOGIN_PASSWORD_INPUT('')) 
+    // const { inputType, EMAIL_OR_USERNAME_LOGIN_INPUT, PASSWORD_LOGIN_INPUT, SET_EMAIL_OR_USERNAME_LOGIN_INPUT, SET_PASSWORD_LOGIN_INPUT, } = props
+    const { inputType } = props
+
+    const { statistics } = useImage()
+
+    const loginOnChangeHandler = (event:any) => {
+        let target = event.target
+        let value:string = event.target.value
+        let id:string = target.id
+        if (id === 'email') {
+            dispatch(SET_EMAIL_OR_USERNAME_LOGIN_INPUT(value))
+        } else if (id === 'password') {
+            dispatch(SET_PASSWORD_LOGIN_INPUT(value))
         }
-        setAlreadyFocusedEmail(true)
     }
-    const emailReset = () => {
-        if (alreadyFocusedPassword === false) {
-            dispatch(SET_LOGIN_EMAIL_INPUT('')) 
+
+    const togglePasswordFocus = (event:any) => {
+        let id:string = event.target.id
+        if (id === 'email') {
+            if (LOGIN_INPUT_FOCUS === 'password') dispatch(TOGGLE_LOGIN_INPUT_FOCUS(id))
         }
-        setAlreadyFocusedPassword(true)    
+        else if (id === 'password') {
+            dispatch(TOGGLE_LOGIN_INPUT_FOCUS(id))
+        }
+    }
+    
+    const passwordToggleValueFunc = () => {
+        passwordTogglevalue(loginPasswordToggleValue, setLoginPasswordToggleValue)
     }
 
+    const declineRememberMe = () => {
+        console.log('remember me?',LET_USER_REMEMBER_ME)
+        // change let user remember to me to logged in user!!!!!
+        dispatch(TOGGLE_LET_USER_REMEMBER_ME())    
+        console.log("me? ", IS_LOGGED_IN_USER)   
+    }
 
-    const LOGIN_EMAIL_INPUT = useSelector( (state:RootState) => state.loginSignup.LOGIN_EMAIL_INPUT)
-    const LOGIN_PASSWORD_INPUT = useSelector( (state:RootState) => state.loginSignup.LOGIN_PASSWORD_INPUT)
-    const inputType = props.inputType
+    const renderLoginInput = () => {
+        return (
+            <div className={styles.flexPropertyColumnCombo}> {/* <div className="column"> */}
+                
+            <input onFocus={togglePasswordFocus} className={styles.input} id={inputType} value={inputType === 'email' ? EMAIL_OR_USERNAME_LOGIN_INPUT : PASSWORD_LOGIN_INPUT } spellCheck="false" onChange={loginOnChangeHandler} type={inputType === 'password' ? LOGIN_PASSWORD_SHOW_CLICK ? "text" : "password" : "text"} />                
+                
+            </div>            
+        )
+    }
 
-    return (
-        // inputType = "password" ? type="password" magnify.png to toggle on/off. 
-        <input 
-        className={styles.input} 
+    return <div className={styles.loginInputContainer}>{renderLoginInput()}</div>
 
-        // type={inputType === "password" && "password" || inputType === "email" && "text"}
-        type="text"
-
-        spellCheck="false"
-        value={inputType === "password" ? LOGIN_PASSWORD_INPUT : inputType === "email" ? LOGIN_EMAIL_INPUT : "" }
-        // value={inputType === "password" && LOGIN_PASSWORD_INPUT || inputType === "email" && LOGIN_EMAIL_INPUT }
-        onChange={inputType === "password" ? passwordInputHandler : inputType === "email" ? emailInputHandler : "" }
-        onFocus={inputType === "password" ? passwordReset : inputType === "email" ? emailReset : "" }
-        // type="text"
-        />        
-    )
 }
