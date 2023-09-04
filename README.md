@@ -26,8 +26,6 @@ https://github.com/frankcollins3/Next-Water-App/assets/73137934/a3fa3941-9aef-47
 ## API:
 Oauth2.0, GraphQL API, AccuweatherAPI (had google Oauth2.0 in react-express)
 
-## User Stories:
-
 ## Technologies / Frameworks
 // this is a reiteration of a react-express app
 * NextJS
