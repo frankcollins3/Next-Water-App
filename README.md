@@ -4,7 +4,7 @@ Dive into the app with this link. 👉 next-water-app.vercel.app
 Water App is a Single Page Application with Next, TS, GraphQL, @redux/toolkit, Oauth2.0, JWT, (had redis cache).
 The App gathers height, weight, age, and other settings to prepare water cycle intake.
 Daily Data is based on Pass/Failing cycles based on: start-time, end-time, notification intensity.
-User can then daily data with react-calendar in /dashboard.
+User can then see daily data with react-calendar in /dashboard.
 Lastly, the app features AccuweatherAPI data to allow user to check input-specified location weather conditions.
 
 # Screenshots:
