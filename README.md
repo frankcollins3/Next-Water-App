@@ -1,5 +1,7 @@
 # Next-Water-App 💧 
 ## A Happy, Healthy Water Cycling App that tracks user/human fluid intake.
+#### sidenote: redoing layout adding hero page (1 large scrolling website) or what I'd call 3 amigos format (nav, centersquare, footer)
+#### : adding some prototype extension (just learned from a .toString() example that changes (i.e.) 38885 to 38,885. also more `<composition>` if can find need
 Dive into the app with this link. 👉 next-water-app.vercel.app
 Water App is a Single Page Application with Next, TS, GraphQL, @redux/toolkit, Oauth2.0, JWT, (had redis cache).
 The App gathers height, weight, age, and other settings to prepare water cycle intake.
