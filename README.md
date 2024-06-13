@@ -1,3 +1,44 @@
+<!--  -->
+original app sensibly restricts user from seeing any content while approaching the app. 
+Want this app to show water-cycle-schedule determining settings bar on <main> page if no user.
+User validation will go between input population & data submission
+<!--  -->
+
+<!-- component | composition -->
+    during FE assignment thought of .toMoney() which takes (i.e):   38885 & (thx chatGPT) returns 38,885. 
+    huge motivation to remake this project:     slight personal improvement in web design 
+
+Number.prototype.toMetrics() Number.prototype.toImperial() 
+<component-composition> 
+<!-- component | composition -->
+
+<!--  -->
+npm i rechart -> pass in { success: true | false } as 2 data points represented, probably specifically by their <LineChart/> | <AreaChart/>
+calendar page also has section with clouds though which connect to accuweather API to return confirmation of user-input-locale-data 
+
+given the clouds and the fact that their <RadialComponent>, I think, with curvature that looks rainbow, if we can somehow:
+
+    cross the concepts of that same page: (conveniently already connecting analytics, the calendar) the icon with clouds
+    analytics of pass fail data same data as calendar option to see it on chart, also like to icon_cloud as like to icon_rainbow
+{rainyDay?}
+<!--  -->
+
+drop in (with the bucket) login
+dip your toes footer
+calendar today: drip water sign. 
+allow settings to seen without login. a schedule of water-cycle-data as well so the user can see app usage, like how ig has (i.e.) w/ phone
+
+<!-- animation and component composition  -->
+This could be your new drip with example data in the beginning.
+<component-composition>
+    gray text but the word that is light-blue will change to also display a message:
+    "YOUR" -> "new" -> "drip" --------------> "YOUR" -> "new" "YOU" //( !.char(r) )"            the "YOU" same "YOUR" with last char removed
+    asserted by inherited child props and hidde
+
+<!--  -->
+
+
+
 # Next-Water-App 💧 
 ## A Happy, Healthy Water Cycling App that tracks user/human fluid intake.
 #### sidenote: redoing layout adding hero page (1 large scrolling website) or what I'd call 3 amigos format (nav, centersquare, footer)
