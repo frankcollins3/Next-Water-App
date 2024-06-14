@@ -17,6 +17,16 @@ the page defaults to new instance of day-correspondent table.waterData upon page
 new vesion will create that day-correspondent waterData not at page load but at upon first user-engagement of water cycle 
 <!--  -->
 
+<!-- settings -->
+settings "quietly' overwrites settings in the event of duplicate data submission
+admittedly the cycle responds immediately to the change so user would know data submission affected the page. 
+still would be nice to change the settings bar
+
+ideally put a mini version of that user's water cycling data in the settings panel from which they made changes.
+(which would take more space than the current panel allows, hence both elems need dynamic sizing)
+settings also because as top explains I want a non-member-page-visitor to see that settings panel without submittability 
+<!-- settings -->
+
 <!--  -->
 npm i rechart -> pass in { success: true | false } as 2 data points represented, probably specifically by their <LineChart/> | <AreaChart/>
 calendar page also has section with clouds though which connect to accuweather API to return confirmation of user-input-locale-data 
