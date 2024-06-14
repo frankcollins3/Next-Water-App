@@ -1,3 +1,11 @@
+<!-- first improvement -->
+dynamic components because I had intentions to put components where they previously wouldn't have been put:
+like: I wanted a non logged in user to be able to see the settings bar
+wanted mini version of schedule to be put on landing page (like how ig, tinder have example of app actually being used on landing page)
+    dynamic componentry seem least so of hoop-jumping approaches
+so technically this is also UX driven UI? we want user to have to anticipate their experience less by demonstrating more of what's in.. on..
+<!-- first improvement -->
+
 <!--  -->
 original app sensibly restricts user from seeing any content while approaching the app. 
 Want this app to show water-cycle-schedule determining settings bar on <main> page if no user.
