@@ -1,0 +1,41 @@
+$bottledsky: #73defe;
+
+#cont {
+    height: 400px; 
+    width: 400px;
+    background-image: url('/water_img/speech_bubble.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    
+    display: grid;
+    justify-content: center;
+    align-items: space-between;
+    // border: 2px solid pink;
+
+    @media (max-width: 850px) {
+        width: 200px;
+        height: 200px;
+    }
+}
+
+#yoursBluely, #span {
+    // color: #
+    font-size: 28px;
+    color: rgba(0, 0, 0, 0.331);
+    // color: $bottledsky;
+}
+    
+.text {
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+    color: rgba(0, 0, 0, 0.331);
+}
+
+
+@media screen and (max-width: 450px) {
+    #cont {
+        width: 250px;
+    }
+}
+
