@@ -13,6 +13,11 @@ Number.prototype.toMetrics() Number.prototype.toImperial()
 <!-- component | composition -->
 
 <!--  -->
+the page defaults to new instance of day-correspondent table.waterData upon page load. 
+new vesion will create that day-correspondent waterData not at page load but at upon first user-engagement of water cycle 
+<!--  -->
+
+<!--  -->
 npm i rechart -> pass in { success: true | false } as 2 data points represented, probably specifically by their <LineChart/> | <AreaChart/>
 calendar page also has section with clouds though which connect to accuweather API to return confirmation of user-input-locale-data 
 
