@@ -15,9 +15,25 @@ $dedede: #dedede70;
     // border: 5px solid blue;
 }
 
-.input:focus {
-    outline: none !important ;
-    border: 1px dashed #73defe !important;
+// .input:focus {
+//     outline: none !important ;
+//     border: 1px dashed #73defe !important;
+//     font-weight: bolder;
+// }
+
+.input:hover{
+    cursor: pointer;
+    outline: none;
+    border: 1px dashed $dedede;
+    background-color: invisible;                                
+    font-weight: bolder;
+}
+
+.input:focus{
+    cursor: none;
+    outline: none;
+    border: 1px dashed $dedede;
+    background-color: invisible;                                
     font-weight: bolder;
 }
 
