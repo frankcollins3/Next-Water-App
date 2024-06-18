@@ -1,30 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Moon+Dance&family=Poppins:ital,wght@0,300;1,100&display=swap');
 
+
 .App {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 0.2fr 1.75fr 0.05fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    'navbar'
-    'main'
-    'credits';
-  width: 80vw;
-  height: 95vh;
-  margin: 0 auto;
-  align-items: center;
-}
-
-.navbar { grid-area: navbar; }
-
-body {
-  color: rgba(255, 255, 255, 0.927);
-  display: grid;  
-  box-sizing: border-box;
+  /* padding: 50px;  */
   margin: 0;
-  min-height: 100vh;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.927);
+  /* display: flex;
+  flex-direction: column; */
+  display: grid;
+  /* border: 2px solid hotpink; */
+  grid-template-rows: 50px 1fr 50px;
+  align-items: center;
+  height: 95vh;
+  max-width: 100vw;
   min-width: 100vw;
 }
+
+/* .navbar { 
+  grid-area: navbar; */
+  /* border: 3px solid hotpink; */
+ /* } */
+
+/* body { */
+  /* color: rgba(255, 255, 255, 0.927); */
+  /* display: grid;   */
+  /* box-sizing: border-box; */
+  /* margin: 0; */
+/* } */
 
 .flex { display: flex; }
 .column { flex-direction: column; }
@@ -33,15 +36,21 @@ body {
 .noFlexWrap { flex-wrap: nowrap; }
 .flexWrap { flex-wrap: wrap; }
 
+.ghost { opacity: 0.0; }
 
 #LifeWaterWaterLife {
   font-family: 'Moon Dance', 'cursive';
-  text-align: center;
-  color: #73defe;
+  /* text-align: center; */
+   color: #73defe;
+  
   font-size: 55px;
   word-spacing: 2em;
-  position: relative;
-  top: 20px;
+  /* position: relative; */
+  /* top: 20px; */ 
+}
+
+#LifeWaterWaterLife:hover {
+   cursor: none;   
 }
 
 @media only screen and (max-width: 800px) {
@@ -450,6 +459,79 @@ abbr {
   @media only screen and (max-width: 600px) {
     /* .panel-target { transform: scale(0.5); } */
   }
+
+  .lazyBoop, 
+  #introWaterDrop:hover {
+    cursor: none;
+    animation-name: lazyBoop;
+    animation-duration: 2.5s;
+    animation-iteration-count: infinite;
+    position: relative;
+}
   
+@keyframes lazyBoop {
+  0% {
+  }
+  25% {
+  }
+  30% {
+    transform: rotate(-4deg);    
+  }
+  35% {
+    /* transform: translateX(-8px); */
+    transform: rotate(0deg);    
+  }
+  40% {
+    /* transform: translateX(-8px); */
+    transform: rotate(-4deg);    
+  }
+  45% {
+    /* transform: translateX(-8px); */
+    transform: rotate(0deg);    
+  }
+  50% {
+    /* transform: translateX(-8px); */
+    transform: rotate(-4deg);
+  }
+  75% {
+    /* transform: translateX(8px); */
+  }  
+}
 
   /* * * * * * * * * * * * *  */
+
+
+  .moveBoat { animation-name: DriveBoat; animation-duration: 6s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+  .moveBoatR { animation-name: DriveBoatR; animation-duration: 4s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+  
+  @keyframes DriveBoat {
+    0% {
+      left: 0;
+    }
+    25% {
+      margin-left: 50px;
+    }
+    50% {
+      margin-left: -100px;
+    }
+    75% {
+      margin-left: 100px;
+    }
+    100% {
+      margin-left: -50px;
+    }
+  }  
+  
+  @keyframes DriveBoatR {
+    0% {
+      left: 0;
+    }
+    50% {
+      left: calc(100% - 7em);
+      margin-left: -50px;
+    }
+    100% {
+      left: 0;
+      margin-left: 0px;
+    }
+  }
