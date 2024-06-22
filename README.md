@@ -1,3 +1,54 @@
+[][ Push Production Improvements ]
+click calendar & everything stays the same just change the bar graph don't even change the water drop. panel shows chart showing this week T|F
+.btn disabling functionality: cant click unless within 30 mins or so.. right now you can click the whole schedule without being up to pocket
+lmaoo don't forget the app enhancing function of letting the user login. 
+userSignup -> "New Wave Icon?" even after the user submitted. it should now say -> <WELL...COME> can show a well since water themed.  
+[][ Push Production Improvements ]
+
+
+<DesignChanges/>
+
+possibly take out the <Calendar/> link in the navbar. User would click on the timer panel which has the [Y] [N] 
+
+<DesignChanges/>
+
+
+
+
+[doing]
+WebIconGrid -> input state
+
+[todo]
+rekognition AWS.       
+npm i rechart for dashboard
+resonsive css for intro screen not icon, probably dashboard too
+login capptcha
+{Data ->        weather     String? }           if weather === "rainy" rain drop if weather === "heatdome" fire drop or cloudy. 
+
+[done]
+<!-- button.active for browser tabs like FE-assignment-digitize on <AppIconGrid>   [<<] [icons] [personal_files] -->
+redes
+
+
+
+example data: "i. wanna. jump. in." -->  "jump" "in" "the" "water" --->  "step" "your" "drip" 'up"  ||   "get" "me" "wet" "now"! 
+
+<WaterThoughts/> 
+at the shower curtain part since that part has nothing else. thought bubble will be the input. 
+<!-- * * * * * * * * * * * * *  -->
+
+                                                                                                                    
+<navbar> no {settings.png} during Calendar swap it for clouds. 
+
+
+<Icons> 
+new way of presenting choice to user  -> Search web, wet or pool of files 
+boat will now be 1 of the 9 icons and it allows you to bring up the cut. 
+<!-- keep tucking UI where it fits like the "water is life" being in navbar not between nav and main container. -->
+
+<!-- * * * * * * * * * * * **  -->
+
+
 <!-- first improvement -->
 dynamic components because I had intentions to put components where they previously wouldn't have been put:
 like: I wanted a non logged in user to be able to see the settings bar
@@ -133,3 +184,33 @@ As a user, you will able to track the last 7 days' progress.
 #### 1 func() handler for locations API -> 2 func() handler to access other accuweatherAPI endpoints
 
 ![Screen Shot 2023-08-02 at 2 26 07 AM](https://github.com/frankcollins3/Next-Water-App/assets/73137934/c36d0891-21f8-4fb4-adc6-e43688e1b1c0)
+
+
+
+
+```
+"
+Invalid `prisma.data.create()` invocation:
+
+{
+  data: {
+    google_id: 'no google-id',
+    date: '6-20-24',
+    progress: 0,
+    weekday: 'Funday',
+    status: [
+      ''
+    ],
++   users: {
++     create?: usersCreateWithoutDataInput | usersUncheckedCreateWithoutDataInput,
++     connectOrCreate?: usersCreateOrConnectWithoutDataInput,
++     connect?: usersWhereUniqueInput
++   }
+  }
+}
+
+Argument users for data.users is missing.
+
+Note: Lines with + are required
+"
+```
