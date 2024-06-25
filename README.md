@@ -1,3 +1,5 @@
+hey bear sensory - lanterns video - calming music - 
+
 [][ Push Production Improvements ]
 <RainyData> -> "which city" -> React Native | mobile version to say "Drop Pin": water drop since given a chance to liken it to location
 click calendar & everything stays the same just change the bar graph don't even change the water drop. panel shows chart showing this week T|F
@@ -5,7 +7,7 @@ click calendar & everything stays the same just change the bar graph don't even 
 lmaoo don't forget the app enhancing function of letting the user login. 
 userSignup -> "New Wave Icon?" even after the user submitted. it should now say -> <WELL...COME> can show a well since water themed.  
 <Credits/Footer> water-cycle is over? keep the bottom footer text { opacity: 1.0 }
-
+VPN | Simple Email Service -> <Timer> -> timer < 60 mins? && user did not engage current cycle[i] ? email user. would need <_UserProfile/>
 <!-- considered idea: while the current session is > 60 minutes away zZz (light blue Z animations going up the bar); -->
 <Rechart/>
 
