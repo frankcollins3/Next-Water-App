@@ -6,7 +6,7 @@ import puppeteer from "puppeteer"
 import passport from "../utility/passport"; 
 import jwt from "jsonwebtoken"
 import Redis from 'ioredis'
-import { SettingsInterface, HydroDataInterface } from "utility/interfaceNtypes"
+// import { SettingsInterface, HydroDataInterface } from "utility/interfaceNtypes"
 
 const redis = new Redis({
   port: 6379,
@@ -28,13 +28,13 @@ const reWriteRedisSettings = async () => {
     await redis.set("settings", settingsStrForRedis)
 }
 
-const reWriteRedisUserSettings = async (users_id:number, usersSettings:SettingsInterface) => {
+const reWriteRedisUserSettings = async (users_id:number, usersSettings:any) => {
   await redis.del(`userSettings:${users_id}`)
     const userSettingsStrForRedis = SERIALIZESTRING(usersSettings)
     await redis.set(`userSettings:${users_id}`, userSettingsStrForRedis)
 }
 
-const reWriteRedisUserData = async (users_id:number, usersData:HydroDataInterface) => {
+const reWriteRedisUserData = async (users_id:number, usersData:any) => {
   await redis.del(`userData:${users_id}`)
   const userDataStrForRedis = SERIALIZESTRING(usersData)
   await redis.set(`userData:${users_id}`, userDataStrForRedis)
@@ -340,7 +340,7 @@ export const resolvers = {
             activity,
             users_id
           }
-        }).then(async(addedSettings:SettingsInterface) => {
+        }).then(async(addedSettings:any) => {
 // await reWriteRedisSettings() //await redis.del("settings") //const allSettings = await allsettingsDB() //const settingsStrForRedis = SERIALIZESTRING(allSettings) //await redis.set("settings", settingsStrForRedis)
           reWriteRedisUserSettings(users_id, addedSettings)
           return addedSettings
