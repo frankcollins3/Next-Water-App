@@ -1,0 +1,46 @@
+    $bottledSky: #73defe;
+    $dedede: #dedede70;
+    $silv: silver; 
+
+    .SignupInputContainer {
+        margin: 0 auto;    
+    }
+
+    .input {
+        text-align: center;
+        border: 1px dashed $bottledSky        ;
+        border-radius: 10px;
+        background-color: #dedede70;
+        height: 2em;
+        width: 10em;
+        color: $silv;
+        margin-top: 0.5em;        
+    }
+    
+    //  github issue #129 CSS library feature with pseudo-class :engage -> 
+        // i.e. all of those below rules for         :hover, :focus         could be tied to :engage 
+        // in this case the goal outcome would've been to separate only {cursor: pointer | none} from {:hover | :focus} respectively. 
+    .input:hover{
+        cursor: pointer;
+        outline: none;
+        border: 1px dashed $dedede;
+        background-color: invisible;                                
+        font-weight: bolder;
+    }
+
+    .input:focus{
+        cursor: none;
+        outline: none;
+        border: 1px dashed $dedede;
+        background-color: invisible;                                
+        font-weight: bolder;
+
+            //  github issue #129 -> idea for CSS library feature that would allow styling of other non-targeted-elements with :pseudo-class 
+        // .input, .header {
+        //     color: $bottledSky;
+        // }
+    }
+
+    .password {
+        color: #73defe;
+    }

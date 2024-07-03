@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Moon+Dance&family=Poppins:ital,wght@1,100&display=swap');
+
+
+.Checker-Container {
+    height: 100%;
+    width: 12em;
+    /* border: 1px dashed #72d3fe; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    margin-top: 0.5em;
+}
+
+.Checker-Droplet {
+    border: none;
+    height: 2em;
+    width: 2em;
+}
+
+.Form-Container {
+    display: grid;
+    justify-items: center;
+    align-items: space-between;
+    height: 100%;
+}
+
+.column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: center;
+    width: 100%;
+    height: 100%;
+    /* border: 5px solid green; */
+    /* margin-top: 0.5em; */
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+p {
+    /* color: #73defe; */
+    /* font-weight: bolder; */
+    font-weight: lighter;
+}
+
+#poppinsLight {
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 100;
+    font-style: italic;
+  }
+
+#parent-checkbox {
+    display: none; /* Hide the default checkbox */
+  }
+  
+  .custom-checkbox {
+    background-color: whitesmoke; /* Change the background color of the checkbox */
+    margin-top: 0.55em;
+    border: 1px dashed #73defe;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    border-radius: 3px;
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .custom-checkbox::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 2px;
+    left: 6px;
+    width: 6px;
+    height: 10px;
+    border: solid #dedede70;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg); /* Style the checkmark */
+    opacity: 0; /* Hide the checkmark by default */
+  }
+  
+  #parent-checkbox:checked + .custom-checkbox::before {
+    opacity: 1; /* Show the checkmark when the checkbox is checked */
+  }
+
+/* #parent-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+#parent-checkbox label {
+    margin: 0;
+}
+
+#parent-checkbox label::before {
+    content: "";
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: red;
+    border: 1px solid black;
+    border-radius: 3px;
+}
+
+#parent-checkbox input[type="checkbox"]:checked + label::before {
+    background-color: red;
+} */
