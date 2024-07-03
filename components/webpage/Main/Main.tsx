@@ -39,7 +39,7 @@ function RenderMain({ HYDRO_SETTINGS }: { HYDRO_SETTINGS: boolean }) {
 
   const yestest = async () => {
 
-    dispatch(TOGGLE_HYDRO_SETTINGS())
+    dispatch(TOGGLE_SHOW_HYDRO_SETTINGS())
 
 //  const allDBsettingsquery = `query { allDBsettings { id, height, weight, age, start_time, end_time, reminder, users_id } }`
 
