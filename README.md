@@ -1,123 +1,19 @@
-hey bear sensory - lanterns video - calming music - 
-
-[][ Push Production Improvements ]
-<RainyData> -> "which city" -> React Native | mobile version to say "Drop Pin": water drop since given a chance to liken it to location
-click calendar & everything stays the same just change the bar graph don't even change the water drop. panel shows chart showing this week T|F
-.btn disabling functionality: cant click unless within 30 mins or so.. right now you can click the whole schedule without being up to pocket
-lmaoo don't forget the app enhancing function of letting the user login. 
-userSignup -> "New Wave Icon?" even after the user submitted. it should now say -> <WELL...COME> can show a well since water themed.  
-<Credits/Footer> water-cycle is over? keep the bottom footer text { opacity: 1.0 }
-VPN | Simple Email Service -> <Timer> -> timer < 60 mins? && user did not engage current cycle[i] ? email user. would need <_UserProfile/>
-<!-- considered idea: while the current session is > 60 minutes away zZz (light blue Z animations going up the bar); -->
-<Rechart/>
-
-once fasting app created, want the water-app calendar to display the settings at the time when data was submitted
-
-[][ Push Production Improvements ]
-
-
-<DesignChanges/>
-
-possibly take out the <Calendar/> link in the navbar. User would click on the timer panel which has the [Y] [N] 
-
-<DesignChanges/>
-
-
-
-
-[doing]
-WebIconGrid -> input state
-
-[todo]
-rekognition AWS.       
-npm i rechart for dashboard
-resonsive css for intro screen not icon, probably dashboard too
-login capptcha
-{Data ->        weather     String? }           if weather === "rainy" rain drop if weather === "heatdome" fire drop or cloudy. 
-
-[done]
-<!-- button.active for browser tabs like FE-assignment-digitize on <AppIconGrid>   [<<] [icons] [personal_files] -->
-redes
-
-
-
-example data: "i. wanna. jump. in." -->  "jump" "in" "the" "water" --->  "step" "your" "drip" 'up"  ||   "get" "me" "wet" "now"! 
-
-<WaterThoughts/> 
-at the shower curtain part since that part has nothing else. thought bubble will be the input. 
-<!-- * * * * * * * * * * * * *  -->
-
-                                                                                                                    
-<navbar> no {settings.png} during Calendar swap it for clouds. 
-
-
-<Icons> 
-new way of presenting choice to user  -> Search web, wet or pool of files 
-boat will now be 1 of the 9 icons and it allows you to bring up the cut. 
-<!-- keep tucking UI where it fits like the "water is life" being in navbar not between nav and main container. -->
-
-<!-- * * * * * * * * * * * **  -->
-
-
-<!-- first improvement -->
-dynamic components because I had intentions to put components where they previously wouldn't have been put:
-like: I wanted a non logged in user to be able to see the settings bar
-wanted mini version of schedule to be put on landing page (like how ig, tinder have example of app actually being used on landing page)
-    dynamic componentry seem least so of hoop-jumping approaches
-so technically this is also UX driven UI? we want user to have to anticipate their experience less by demonstrating more of what's in.. on..
-<!-- first improvement -->
-
-<!--  -->
-original app sensibly restricts user from seeing any content while approaching the app. 
-Want this app to show water-cycle-schedule determining settings bar on <main> page if no user.
-User validation will go between input population & data submission
-<!--  -->
-
-<!-- component | composition -->
-    during FE assignment thought of .toMoney() which takes (i.e):   38885 & (thx chatGPT) returns 38,885. 
-    huge motivation to remake this project:     slight personal improvement in web design 
-
-Number.prototype.toMetrics() Number.prototype.toImperial() 
-<component-composition> 
-<!-- component | composition -->
-
-<!-- table.data.create() everyday up on app-load -->
-the page defaults to new instance of day-correspondent table.waterData upon page load. 
-new vesion will create that day-correspondent waterData not at page load but at upon first user-engagement of water cycle 
-    this makes even more sense when you think that the calendar feature emphasizes allowing users a scenic path to READ their own data
-    to then force them to write data just because they opened the app. 
-<!-- table.data.create() everyday up on app-load -->
-
-<!--  -->
-npm i rechart -> pass in { success: true | false } as 2 data points represented, probably specifically by their <LineChart/> | <AreaChart/>
-calendar page also has section with clouds though which connect to accuweather API to return confirmation of user-input-locale-data 
-
-given the clouds and the fact that their <RadialComponent>, I think, with curvature that looks rainbow, if we can somehow:
-
-    cross the concepts of that same page: (conveniently already connecting analytics, the calendar) the icon with clouds
-    analytics of pass fail data same data as calendar option to see it on chart, also like to icon_cloud as like to icon_rainbow
-{rainyDay?}
-<!--  -->
-
-drop in (with the bucket) login
-dip your toes footer
-calendar today: drip water sign. 
-allow settings to seen without login. a schedule of water-cycle-data as well so the user can see app usage, like how ig has (i.e.) w/ phone
-
-<!-- animation and component composition  -->
-This could be your new drip with example data in the beginning.
-<component-composition>
-    gray text but the word that is light-blue will change to also display a message:
-    "YOUR" -> "new" -> "drip" --------------> "YOUR" -> "new" "YOU" //( !.char(r) )"            the "YOU" same "YOUR" with last char removed
-    asserted by inherited child props and hidde
-
-<!--  -->
-
-# Maintenance Bank Git issue #128 https://github.com/frankcollins3/Next-Water-App/issues/128
-for readability ../ one step out from code-relative.
-
-
 # Next-Water-App 💧 
+
+#### recent [july 2024 update] 
+* went to fix alignment: the "Life is Water" text, which is now a `<navbar> <h1>` was between the navbar and main container. Objectively it was out of alignment
+* UX driven UI ? Wanted to allow page-visitors to see the app without signing up.  
+* `<RainyData>` (accuweather API -> check user-input-city|zipcode weather conditions -> `<Weather-Or-Not/>` then `<WheresWater/>` // cheesy wheres-waldo joke
+* * * * * * * * * * * * * * * * * * * * *
+
+#### possible improvements:
+* re-integrate google API
+* if (username.includes('squid') -> black water drop, pollution theme. /public
+
+* WHOOP (wearable integration) && "Red-Bulb-Temperature | Heat-Dome temps accommodation" && intermittent-fasting (30% of hydration comes from food) accommodation
+* fasting app will be created but wishlisty goal: allow `<WaterApp> | <NutritionalSleep>` to consume each other's user data.  
+* * * * * * * * * * * * * * * * * * * * *
+
 ## A Happy, Healthy Water Cycling App that tracks user/human fluid intake.
 #### sidenote: redoing layout adding hero page (1 large scrolling website) or what I'd call 3 amigos format (nav, centersquare, footer)
 #### : adding some prototype extension (just learned from a .toString() example that changes (i.e.) 38885 to 38,885. also more `<composition>` if can find need
