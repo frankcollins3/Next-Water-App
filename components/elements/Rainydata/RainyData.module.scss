@@ -1,0 +1,128 @@
+$silv: silver;
+$bottledSky: #73defe;
+$dedede: #dedede70;
+
+#windowImg {
+    height: 250px;
+    width: 250px;
+    margin: 0;
+}
+
+#windowImg:hover {
+    cursor: pointer;
+}
+
+.curtain {
+    height: 250px;
+    width: 250px;
+}
+
+#rainyDataCont {
+    border: 1px dashed $bottledSky;
+    width: 400px;
+    height: 400px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+}
+
+.text {
+    color: $bottledSky;
+}
+
+.text:hover {
+    color: silver;
+    margin: 0;
+}
+
+#inputVal {
+    text-align: center;
+    border: 1px dashed $bottledSky;
+    border-radius: 10px;
+    background-color: #dedede70;
+    height: 2em;
+    width: 10em;
+    color: $silv;
+    // margin-top: 0.5em;
+    // color: $silv; text-align: center; border: 1px dashed silver; 
+}
+
+#inputVal:hover {
+    cursor: pointer;
+    outline: none;
+    border: 1px dashed $dedede;
+    background-color: invisible;
+    font-weight: bolder;
+}
+
+#inputVal:focus {
+    cursor: none;
+    outline: none;
+    border: 1px dashed $dedede;
+    background-color: invisible;
+    font-weight: bolder;
+}
+
+.itsRainingCont {
+    /* border: 40px solid #73defe; */
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.button {
+    // margin-top: 0.5em;
+    height: 35px;
+    width: 35px;
+    background-color: none;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border: none;
+    border-radius: 50%;
+    /* <button style={{ backgroundColor: '1px solid white', backgroundImage: `url('${curtain}')`, backgroundSize: 'cover', marginTop: '0.25em', height: '35px', width: '35px', display: peek ? "" : "none" }}> </button> */
+}
+
+.button:hover {
+    cursor: pointer;
+}
+
+
+@media only screen and (max-width: 1000px) {
+    #rainyDataCont {
+        border: 1px dashed $bottledSky;
+        width: 300px;
+        height: 400px;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    #rainyDataCont {
+        border: 1px dashed $bottledSky;
+        width: 200px;
+        height: 400px;
+    }
+    #windowImg, .curtain {
+        height: 150px !important;
+        width: 150px !important;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    #rainyDataCont {
+        border: 1px dashed $bottledSky;
+        width: 200px;
+        height: 400px;
+    }
+    #windowImg, .curtain {
+        height: 50px !important;
+        width: 50px !important;
+        margin: 0;
+    }
+    
+}
+
+@media only screen and (max-width: 400px) {
+    .text {
+        font-size: 18px;
+    }
+}
