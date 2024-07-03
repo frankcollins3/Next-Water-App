@@ -1,1 +1,4 @@
-export default function backupindex () => { return <p> hey </p> }
+export default function BackupIndex () {
+  return (
+    <p> oh come on </p>
+}
