@@ -3,7 +3,7 @@ import axios from "axios"
 
 // components and styles.
 import Settings from "components/elements/Settings";
-import Schedule from "components/elements/Schedule/Schedule";
+// import Schedule from "components/elements/Schedule/Schedule";
 
 // @redux/toolkit global state management
 import { RootState } from "redux/store/rootReducer"
