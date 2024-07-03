@@ -208,7 +208,7 @@ export function ImgProvider({ children }: Props) {
     const [towelBoy, settowelBoy] = useState<string>(`${imagePrefix}towelBoy.png`)
     const [testTube, settestTube] = useState<string>(`${imagePrefix}test-tube.png`)
     const [computer, setcomputer] = useState<string>(`${imagePrefix}computer.png`)
-    const [fileUpload, setFileUpload] = useState<string>(`${imagePrefix}fileupload.png`)
+    const [fileUpload, setFileUpload] = useState<string>(`${imagePrefix}fileUpload.png`)
     const [ReusableImageObject, setReusableImageObject] = useState({ src: '', size: 0, unit: '', className: '', id: '', func: '', event: ''})
     const [speechBubble, setspeechBubble] = useState<string>(`${imagePrefix}speech-bubble.png`);
     const [bg, setBg] = useState<string>(`${imagePrefix}bg.png`);
