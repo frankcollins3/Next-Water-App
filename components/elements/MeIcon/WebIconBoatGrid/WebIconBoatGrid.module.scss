@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Moon+Dance&family=Poppins:ital,wght@0,300;1,100&display=swap');
+
+$silv: silver;
+$dedede: #dedede70;
+$bottledSky: #73defe;
+
+
+// .flexPropertyColumnCombo {
+//   border: 5px solid olive;
+// }
+// puppet-cup
+// background: `url('${puppetCup}') no-repeat center / cover`, height: '50vh', width: '50vw', justifyContent: 'center', alignItems: 'center'
+
+#meIconContainer {
+    display: grid;
+    justify-content: space-between; /* Add this line */
+    align-items: center;    
+    justify-content: center;
+    align-items: center;
+    background-color: $dedede;
+    min-height: 50vh;
+    min-width: 50vw;
+    padding: 1em 1em;
+    grid-gap: 0.5em;  
+}
+
+
+#boat {
+    height: 200px;
+    width: 200px;
+}
+
+#backBtn {
+  font-family: "Moon Dance", cursive;
+  font-size: 38px;
+  color: $bottledSky;
+  position: relative;   
+  // margin: 0 0.5em;
+}
+
+#backBtn:hover {
+  cursor: pointer; 
+}
+
+#backBtnRow {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  // padding: 0 20px;
+}
+
+#input {
+  text-align: center;
+  border: 1px dashed $bottledSky;
+  border-radius: 10px;
+  background-color: $dedede;
+  height: 2em;
+  width: 10em;
+  color: white;
+  font-size: 28px;
+  margin-top: 0.5em;
+  font-family: "Moon Dance", cursive;
+}
+
+#input:hover {
+  cursor: pointer;
+  outline: none;
+  border: 1px dashed $dedede;
+  background-color: invisible;                                
+  font-weight: bolder;
+}
+
+#input:focus {
+  cursor: none;
+  outline: none;
+  border: 1px dashed $dedede;
+  background-color: invisible;                                
+  font-weight: bolder;
+}
+
+@media only screen and (max-width: 600px) {
+    #boat {
+        height: 150px;
+        width: 150px;
+    }
+}
+
+.icon { height: 50px; width: 50px; border-radius: 50%; }
+
+.moveBoat { animation-name: DriveBoat; animation-duration: 6s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+.moveBoatR { animation-name: DriveBoatR; animation-duration: 4s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+
+@keyframes DriveBoat {
+  0% {
+    left: 0;
+  }
+  25% {
+    margin-left: 50px;
+  }
+  50% {
+    margin-left: -100px;
+  }
+  75% {
+    margin-left: 100px;
+  }
+  100% {
+    margin-left: -50px;
+  }
+}  
+
+@keyframes DriveBoatR {
+  0% {
+    left: 0;
+  }
+  50% {
+    left: calc(100% - 7em);
+    margin-left: -50px;
+  }
+  100% {
+    left: 0;
+    margin-left: 0px;
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  #boat {
+    height: 150px;
+    width: 150px;
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  #meIconContainer {
+    border: 5px solid rgb(91, 122, 29);
+  }
+
+  #boat {
+    height: 150px;
+    width: 150px;
+  }
+}

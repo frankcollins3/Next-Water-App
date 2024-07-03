@@ -1,0 +1,152 @@
+
+
+.navbarcontainer {    
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    // gap: 10%;
+    height: 50px;
+    margin-top: 2em;
+    padding: 0 20px; 
+    max-width: 100% !important;    
+    box-sizing: border-sizing;
+  }
+
+  #iconCont {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    flex-wrap: nowrap;
+
+    margin-right: 1.5rem;
+    // width: 200px;
+    // border: 2px solid grey;
+    // margin-right: 10px;
+  }
+
+  
+
+  // #textCont {
+  //   border: 5px solid crimson;
+  //   height: 50px;
+  //   width: 200px;
+  //   display: grid;
+  //   align-items: center;
+  //   justify-content: center;
+  // }
+  // #iconCont {
+  //   border: 5px solid orange;
+  //   height: 50px;
+  //   width: fit-content;
+  //   display: grid;
+  //   align-items: center;
+  //   justify-content: center;
+  // }
+  
+  .navbarcontainer img {
+    // padding: 0.125em;
+    height: 50px;
+    width: 50px;
+    margin: 0 0.5em;
+    border-radius: 50%;
+    border: none;
+  }
+
+  .navbarcontainer img:hover {
+    cursor: pointer;
+  }
+
+// with no flexgrow, iphone responsive designs create uneven space. more white space to the Left than Right. ipad & desktop space-between were evenly spaced without this property.
+  .navbarcontainer > div:first-child { flex-grow: 1; }    
+
+  .msgBottleAnimation {
+    animation-name: Boop;
+    animation-duration: 4s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;    
+  }
+
+
+
+  @keyframes Boop {
+    0% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(45deg);
+    }
+    75% {
+      transform: rotate(-45deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+
+  @media only screen and (max-width: 850px) {
+    .navbarcontainer {
+      // padding: 0 5%;      
+    }
+
+    .navbarcontainer img {
+      // height: 40px;
+      // width: 40px;
+    }
+
+    #iconCont {
+      margin-right: 5%;
+    }
+  }
+
+  @media only screen and (max-width: 750px) {
+    .navbarcontainer {
+      // justify-content: center;
+      // padding: 0 15%;
+    }
+    .navbarcontainer img {
+      margin: 0.25em;
+      // height: 25px;
+      // width: 25px;
+    }
+    #iconCont {
+      // margin-right: 100px;
+      // border: 2px solid coral;
+      // margin-right: 10%;
+    }
+  }
+  
+  @media only screen and (max-width: 600px) {    
+    .navbarcontainer img {
+      height: 35px;
+      width: 35px;
+      margin: 0 0.125em;
+     }
+  }
+
+  @media only screen and (max-width: 500px) {    
+    .navbarcontainer img {
+      height: 25px;
+      width: 25px;
+      margin: 0 0.05em;
+     }
+  }
+
+  
+  
+  @media only screen and (max-width: 350px) {
+    .navbarcontainer {
+       padding: 0 100px;
+    }
+
+    // .navbarcontainer img {
+    //     height: 25px;
+    //     width: 25px;
+    // }     
+  }
+
+  @media only screen and (max-width: 300px) {
+    .navbarcontainer img {
+        height: 20px;
+        width: 20px;
+    }
+  }
