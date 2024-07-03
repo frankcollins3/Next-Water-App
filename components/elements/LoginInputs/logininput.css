@@ -1,0 +1,45 @@
+.SignupInput-Container {
+    margin: 0 auto;
+}
+
+ input {
+    border: transparent;
+    background-color: #dedede70;
+    /* color: silver; */
+    color: silver;
+}
+
+input:focus {
+    border: 1px dashed #73defe;
+    font-weight: bolder;
+}
+
+#password {
+  color: #73defe;
+}
+
+.login-password-show-img { 
+    height: 25px;
+    width: 25px;
+    opacity: 0.1;
+    margin-top: 0.25em;
+}
+
+.login-password-show-img:hover {
+    opacity: 1.0;    
+}
+
+/* img {
+    height: 50px;
+    width: 50px;
+    opacity: 0.1;
+} */
+
+/* img:hover { opacity: 1.0; } */
+
+.column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}

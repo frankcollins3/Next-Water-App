@@ -1,0 +1,175 @@
+.displayContainer {
+  // height: 100px;
+  transform: scale(0.25);
+  height: 50px;
+  width: 100px;
+  // height: 300px;
+  // width: 300px;
+
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  // overflow: hidden;
+}
+
+.progress {
+  // overflow: hidden;
+  transform: scale(0.25);
+  max-height: 50px;
+  
+  position: relative;
+  // top: -60%;
+  // left: 30%;
+  transform: translate(-50%, -50%);
+  font-size: 3em;
+  font-weight: bold;
+}
+
+.progressBar {
+  // border: 5px solid hotpink;
+  border-radius: 50%;
+
+  margin: 0 auto;
+  height: 80px;
+  width: 80px;
+  // height: 200px;
+  // width: 200px;  
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  color: rgb(71, 69, 69);
+  // border: 5px solid hotpink;
+}
+// background-image: url('/water_img/bg.png') !important;
+// background-size: cover !important;
+// background-repeat: no-repeat !important; 
+// border-radius: 50% 50% 60% 60%; /* Adjust the border-radius to shape the droplet */
+
+.img {
+  height: 50%;
+  width: 50%;
+  z-index: 100;
+}
+
+
+@media only screen and (max-width: 600px) {
+  .displayContainer {
+    position: relative;
+    height: 60%;
+    width: 50%;
+    margin: 0 auto;
+    top: -15%;
+    left: -10%;
+    margin-bottom: 20px;
+  }
+
+  .progress {
+    position: relative;
+    top: -60%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5em;
+    font-weight: bold;
+  }
+
+  .progress-bar {
+    margin: 0 auto;
+    height: 100%;
+    width: 100%;
+  }
+
+  .progress-bar img {
+    height: 100%;
+    width: 100%;
+    z-index: 100;
+  }
+}
+
+// .displayContainer {
+//     height: 150px;
+//     width: 150px;
+//   }
+
+//   .progress {
+//     position: relative;
+//     top: -60%;
+//     left: 30%;
+//     transform: translate(-50%, -50%);
+//     // font-size: 3em;
+//     font-weight: bold;
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     flex-direction: column;
+//     z-index: 200;
+//     color: silver;
+//   }
+
+//   // .progressBar {
+//   //   margin: 0 auto;
+//   // }
+
+//   .progressBar {
+//     width: 100px;
+//     // height: 160px;
+//     background-color: #73defe; /* Blue background for the droplet shape */
+//     display: grid;
+//     justify-content: center;
+//     align-items: center;
+//     border-radius: 50% 50% 60% 60%; /* Adjust the border-radius to shape the droplet */
+//     position: relative;
+
+//     /* Pseudo-element to create the water droplet's drop */
+
+//     &:after {
+//       content: '';
+//       position: absolute;
+//       bottom: -20px;
+//       left: 50%;
+//       transform: translateX(-50%);
+//       width: 40px;
+//       height: 40px;
+//       background-color: #73defe;
+//       border-radius: 50%;
+//     }
+//   }
+
+//   .progressBar img {
+//     height: 100%;
+//     width: 100%;
+//     z-index: 100;
+//     border-radius: 50%;
+//   }
+
+//   @media only screen and (max-width: 600px) {
+//     .displayContainer {
+//       position: relative;
+//       height: 60%;
+//       width: 50%;
+//       margin: 0 auto;
+//       top: -15%;
+//       left: -10%;
+//       margin-bottom: 20px;
+//     }
+
+//     .progress {
+//       position: relative;
+//       top: -60%;
+//       left: 40%;
+//       transform: translate(-50%, -50%);
+//       font-size: 1.5em;
+//       font-weight: bold;
+//       color: black;
+//     }    
+
+//     .progressBar img {
+//       height: 100%;
+//       width: 100%;
+//       z-index: 100;
+//     }
+//   }
+
+//   @media only screen and (max-width: 400px) {
+
+//   }

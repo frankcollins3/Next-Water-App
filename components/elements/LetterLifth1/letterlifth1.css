@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Moon+Dance&family=Poppins:ital,wght@1,100&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Moon+Dance&family=Poppins:ital,wght@0,300;1,100&display=swap');
+
+#LetterLifth1 {
+    display: grid;
+    justify-content: space-between;
+    align-items: center;
+    grid-template-columns: 1fr;
+    justify-content: center;
+    align-items: center;
+    border: 1px dashed #73defe;
+    text-align: center;
+}
+
+.lifewater {
+    font-family: "Moon Dance", cursive;
+    letter-spacing: 1.175em;
+    color: #73defe;
+    font-size: 32px;
+    text-align: center;
+  
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+  }
