@@ -11,7 +11,9 @@
 * if (username.includes('squid') -> black water drop, pollution theme. /public
 
 * WHOOP (wearable integration) && "Red-Bulb-Temperature | Heat-Dome temps accommodation" && intermittent-fasting (30% of hydration comes from food) accommodation
-* fasting app will be created but wishlisty goal: allow `<WaterApp> | <NutritionalSleep>` to consume each other's user data.  
+* fasting app will be created but wishlisty goal: allow `<WaterApp> | <NutritionalSleep>` to consume each other's user data.
+
+{model.users -> useZipCodeOk:boolean} {model.data -> weather} can save accuweather API data in the {model.data}
 * * * * * * * * * * * * * * * * * * * * *
 
 ## A Happy, Healthy Water Cycling App that tracks user/human fluid intake.
