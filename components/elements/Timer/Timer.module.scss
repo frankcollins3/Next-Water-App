@@ -1,0 +1,28 @@
+$blackniner: rgb(71, 69, 69);
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+NG+Modern:wght@100..400&display=swap');
+// easyEyeBlack but sounds insinuitive even if descriptive in sourcing. beats $blacklmao one could even joke and drag 71 to be 69 #3 lol
+
+#timer {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    color: $blackniner;
+    text-align: center;
+}
+
+#panda {
+    height: 85px;
+    width: 85px;
+}
+
+#timerText {
+    color: $blackniner;
+    font-weight: bolder;
+}
+
+.img {
+// .timer img{                                                     
+    height: 100px !important;
+    width: 100px !important;
+    // border: 5px solid pink;
+}

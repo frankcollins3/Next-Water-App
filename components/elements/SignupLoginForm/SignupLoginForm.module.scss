@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Moon+Dance&family=Poppins:ital,wght@0,300;1,100&display=swap');
+
+$bottledSky: #72defe;
+$dedede: #dedede70;
+$appBg:  rgba(255, 255, 255, 0.927);
+
+#cont {    
+        display: grid;
+        height: 100%;
+        width: 100%;
+        padding: 0px;
+        grid-template-rows: auto 300px auto; 
+
+        grid-template-columns: 1fr; /* Single column layout */
+        // align-items: space-between;
+        gap: 25px; /* Adjust gap as needed */
+        border: 1px dashed $bottledSky;
+        border-radius: 10px;
+        // margin-top: 2em;    
+}
+
+#faucetCont {
+    width: 400px;
+    // border: 1px solid orange;
+    display: grid;
+    grid-area: faucet;    
+}
+
+#loginSignupBtnCont {
+    display: flex;
+    flex-shrink: 1;
+    justify-content: space-between;
+    width: 100%;
+
+}
+
+.loginSignupBtn {
+    display: grid;
+    // display: flex;
+    // flex-shrink: 1;
+    justify-content: center;
+    grid-area: loginSignup;
+    height: fit-content;
+    padding: 2px; 
+    width: 100px;
+    border: 1px dashed $bottledSky;
+    font-family: 'Moon Dance', cursive !important; 
+    font-size: 32px;
+    color: silver;
+    // background-color: 
+    // border-radius: 10%;
+    border-radius: 10px;
+    margin: 0 1em;
+}
+
+.loginSignupBtn:hover {
+    cursor: pointer;
+    border: 1px dashed $dedede;
+    background-color: invisible;                                
+}
+
+.loginSignupBtn:focus { outline: none; }
+
+#submitFaucet {
+    display: flex;
+    flex-shrink: 1;
+    position: relative;
+    height: 125px;
+    width: 125px;
+    // top: 30px;
+    align-self: flex-end;
+}
+// dry code with all these pseudo-classes but emphasizing readability. 
+#submitFaucet:hover { cursor: pointer; }
+
+#testTubeTestLogin {
+    transform: rotate(90deg);
+}
+#testTubeTestLogin:hover { cursor: pointer; }
+
+
+
+#btnCont {
+    display: flex;
+    // flex: 1;
+    position: relative;
+    // top: -10px;
+    height: 100%;
+    align-items: center;
+    // border: 1px dashed $dedede;
+    margin: 0;
+    padding: 0;
+    top: -1em;
+}
+
+
+#backBtn {
+    font-family: "Moon Dance", cursive;
+    font-size: 38px;
+    color: $bottledSky;
+    position: relative;   
+    // margin: 0 0.5em;
+}
+
+#backBtn:hover { 
+    cursor: pointer;    
+}
+
+#backBtnSignupCheckerRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    // padding: 0 20px;
+}
+
+@media screen and (max-width: 1000px) {
+    
+}
+
+@media screen and (max-width: 850px) {    
+    #faucetCont {
+        width: 200px;        
+    }
+
+    #cont {
+        width: 90%;
+        // border: 5px solid hotpink;        
+    }    
+    // #backBtnSignupCheckerRow {
+    //     justify-content: column;
+    //     border: 5px solid hotpink;
+    // }
+}
+
+@media screen and (max-width: 750px) {
+    #cont {
+        // width: 70%;
+    }
+}

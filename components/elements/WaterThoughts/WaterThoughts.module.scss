@@ -1,0 +1,89 @@
+$bottledSky: #73defe;
+
+#cont {
+    height: 200px; 
+    width: 200px;
+    background-image: url('/water_img/speech_bubble.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-area: topbox; 
+    // border: 2px solid pink;
+}
+
+#yoursBluely, #span {
+    // color: #
+    height: 50px;
+    font-size: 18px;
+    color: rgba(0, 0, 0, 0.331);
+    position: relative;
+    // left: 50px; 
+    // top: 10px; 
+    font-size: 35px;
+    color: $bottledSky;
+}
+
+#punctuationSpan {
+
+    font-size: 50px; 
+    color: $bottledSky;
+}
+    
+.text {
+    height: 50px;
+    // border: 1px solid brown;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+    position: relative;
+    left: 7.5px;      
+    font-size: 25px;
+    color: rgba(0, 0, 0, 0.331);
+}
+
+@media (max-width: 1000px) {
+    #cont {
+        width: 150px;
+        height: 200px;
+    }
+    .text {        
+        color: rgba(0, 0, 0, 0.331);
+        font-size: 14px;
+        left: 25px;
+    }    
+}
+
+@media (max-width: 850px) {
+    #cont {
+        transform: scale(0.5) !important;
+        position: relative;
+        left: -50px;
+        // width: 150px;
+        // height: 200px;
+    }
+    .text {        
+        color: rgba(0, 0, 0, 0.331);
+        font-size: 14px;
+        left: 25px;
+    }
+}
+
+@media (max-width: 850px) {
+    #cont {
+        transform: scale(0.9);
+    }   
+    .text {
+        // color: orange;
+    }                  
+}
+
+@media screen and (max-width: 600px) {
+    #cont {
+        position: relative;
+        width: 250px;
+        left: -160px;
+    }
+}
