@@ -1,0 +1,193 @@
+$bottledSky: #73defe;
+$dedede: #dedede70;
+
+#mainContainer {
+    display: grid;
+    grid-template-columns: 1.5fr 0.5fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-template-areas: 'primary panel';
+    
+    min-width: 85vw;
+    height: 70vh;
+    
+    margin: 0 auto;
+    // border: 5px solid orange    
+  }
+  
+#primary {
+    grid-area: primary;
+    display: flex;    
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;                                         
+    padding: 20px; 
+  }
+  
+#panel {
+    grid-area: panel;
+    overflow: auto;
+    width: 100%;            
+  }
+
+#isLoggedInWaterDrop {
+    height: 200px;
+    width: 200px;
+    display: flex;
+    flex-shrink: 1;
+}
+
+#mainDrop {
+    height: 150px;
+    width: 150px;
+}
+
+.mainContent {
+    overflow-x: hidden;
+    margin-top: 20px;
+    display: flex;
+    // flex-wrap: wrap;
+    flex: 1;
+    flex-shrink: 1;
+    align-items: center;
+    justify-content: space-around;
+    max-width: 100vw;
+}
+
+#waterDropThoughtsBox {    
+    padding: 30px;
+    border: 1px solid rgb(223, 219, 219);
+    border-radius: 10px;
+    height: 400px;
+    width: 500px;
+    display: grid;
+    grid-template-areas:
+        ". topbox"
+        "bottombox .";
+    grid-template-rows: minmax(150px, 1fr) minmax(250px, 1fr);
+    grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr);
+    align-items: center;
+    justify-items: center;
+}
+
+#introWaterDrop {
+    height: 300px;
+    width: 350px;
+    grid-area: bottombox;
+    position: relative;
+}
+
+#introWaterScheduleCont {
+    height: 450px;
+    width: 500px;
+}
+
+#mainCont {
+    display: flex;
+    // flex: 1;
+    border: 3px solid blue;
+    // height: 400px;   
+}
+
+
+.lazyBoop {
+    cursor: none;
+    animation-name: lazyBoop;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    position: relative;
+}
+
+@media screen and (max-width: 1000px) {
+    #primary {
+        // border: 4px dashed olive;
+        // max-width: 50% !important;
+    }
+
+    #panel {
+        // border: 4px dashed rebeccapurple;
+        position: relative;
+        left: -50px;
+    }
+
+    .mainContent {
+        // border: 4px solid hotpink;
+    }
+
+    #isLoggedInWaterDrop {
+        height: 100px;
+        width: 100px; 
+    }
+
+    #waterDropThoughtsBox {
+        height: 200px;
+        border: none;
+        width: 250px;
+    }
+
+    #introWaterDrop {
+        height: 250px;
+        width:  300px;
+        position: relative;
+        top: -80px;
+    }
+}
+
+@media screen and (max-width: 850px) {        
+    #primary {
+        padding: 10px; 
+    }
+
+    #waterDropThoughtsBox {    
+        height: 450px !important;
+        width: 200px !important;
+    }
+
+    #introWaterScheduleCont {
+        height: 450px;
+        width: 400px;
+    }
+
+    #waterDropThoughtsBox {
+        height: 240px;  // height is 80% of width
+        width: 300px;        
+    } 
+
+    #introWaterDrop {
+        height: 150px;
+        width: 200px;
+        grid-area: bottombox;
+        top: -60px; 
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .mainContent {
+        // align-self: center;
+        // width: 75%;
+        // border: 3px solid purple;
+    }
+
+    #primary {
+        // border: 5px solid crimson;
+        width: 50% !important;
+    }
+
+    #panel {
+        position: relative;
+        left: -175px;
+    }
+
+    #waterDropThoughtsBox {
+        height: 450px !important;
+        width: 100px !important;        
+    }
+    
+
+    #introWaterDrop {
+        height: 100px;
+        width: 150px;
+        left: -50px;
+    }
+}
